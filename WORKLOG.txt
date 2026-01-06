@@ -8,6 +8,19 @@ DONE:
 DECISIONS:
 - Switched documentation format to Markdown for better readability.
 
+[2026-01-06 11:25] Antigravity
+DONE:
+- Installed .NET Aspire Workload.
+- Created .NET Aspire Solution (AppHost, ServiceDefaults, Api).
+- Created React Frontend (MagicDraw.Web) using Vite.
+- Upgraded all projects to .NET 9.0 / Aspire 9.0.
+- Configured AppHost to orchestrate Api and Web.
+- Validated build.
+
+DECISIONS:
+- Upgraded to .NET 9.0 to align with latest Aspire 9.0 features and SDK.
+- Used React+Vite for Frontend as planned.
+
 NEXT:
-- Confirm project settings with User (Frontend framework, AI provider).
-- Initialize .NET Aspire Solution structure.
+- Implement Database (Postgres) in AppHost.
+- Implement Authentication.

@@ -1,0 +1,13 @@
+D:\Egyetem\komplex_ami\komlex_ami\src\MagicDraw.ServiceDefaults\bin\Debug\net9.0\MagicDraw.ServiceDefaults.deps.json
+D:\Egyetem\komplex_ami\komlex_ami\src\MagicDraw.ServiceDefaults\bin\Debug\net9.0\MagicDraw.ServiceDefaults.dll
+D:\Egyetem\komplex_ami\komlex_ami\src\MagicDraw.ServiceDefaults\bin\Debug\net9.0\MagicDraw.ServiceDefaults.pdb
+D:\Egyetem\komplex_ami\komlex_ami\src\MagicDraw.ServiceDefaults\obj\Debug\net9.0\MagicDraw.ServiceDefaults.csproj.AssemblyReference.cache
+D:\Egyetem\komplex_ami\komlex_ami\src\MagicDraw.ServiceDefaults\obj\Debug\net9.0\MagicDraw.ServiceDefaults.GeneratedMSBuildEditorConfig.editorconfig
+D:\Egyetem\komplex_ami\komlex_ami\src\MagicDraw.ServiceDefaults\obj\Debug\net9.0\MagicDraw.ServiceDefaults.AssemblyInfoInputs.cache
+D:\Egyetem\komplex_ami\komlex_ami\src\MagicDraw.ServiceDefaults\obj\Debug\net9.0\MagicDraw.ServiceDefaults.AssemblyInfo.cs
+D:\Egyetem\komplex_ami\komlex_ami\src\MagicDraw.ServiceDefaults\obj\Debug\net9.0\MagicDraw.ServiceDefaults.csproj.CoreCompileInputs.cache
+D:\Egyetem\komplex_ami\komlex_ami\src\MagicDraw.ServiceDefaults\obj\Debug\net9.0\MagicDraw.ServiceDefaults.sourcelink.json
+D:\Egyetem\komplex_ami\komlex_ami\src\MagicDraw.ServiceDefaults\obj\Debug\net9.0\MagicDraw.ServiceDefaults.dll
+D:\Egyetem\komplex_ami\komlex_ami\src\MagicDraw.ServiceDefaults\obj\Debug\net9.0\refint\MagicDraw.ServiceDefaults.dll
+D:\Egyetem\komplex_ami\komlex_ami\src\MagicDraw.ServiceDefaults\obj\Debug\net9.0\MagicDraw.ServiceDefaults.pdb
+D:\Egyetem\komplex_ami\komlex_ami\src\MagicDraw.ServiceDefaults\obj\Debug\net9.0\ref\MagicDraw.ServiceDefaults.dll
