@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "7jPER1Bosoc=",
+  "dgSpecHash": "E+xctULwTSM=",
   "success": true,
   "projectFilePath": "D:\\Egyetem\\komplex_ami\\komlex_ami\\src\\MagicDraw.Api\\MagicDraw.Api.csproj",
   "expectedPackageFiles": [
@@ -40,6 +40,7 @@
     "C:\\Users\\Levi\\.nuget\\packages\\microsoft.extensions.telemetry.abstractions\\9.0.0\\microsoft.extensions.telemetry.abstractions.9.0.0.nupkg.sha512",
     "C:\\Users\\Levi\\.nuget\\packages\\microsoft.io.recyclablememorystream\\3.0.0\\microsoft.io.recyclablememorystream.3.0.0.nupkg.sha512",
     "C:\\Users\\Levi\\.nuget\\packages\\microsoft.openapi\\1.6.17\\microsoft.openapi.1.6.17.nupkg.sha512",
+    "C:\\Users\\Levi\\.nuget\\packages\\openai\\2.0.0-beta.5\\openai.2.0.0-beta.5.nupkg.sha512",
     "C:\\Users\\Levi\\.nuget\\packages\\opentelemetry\\1.9.0\\opentelemetry.1.9.0.nupkg.sha512",
     "C:\\Users\\Levi\\.nuget\\packages\\opentelemetry.api\\1.9.0\\opentelemetry.api.1.9.0.nupkg.sha512",
     "C:\\Users\\Levi\\.nuget\\packages\\opentelemetry.api.providerbuilderextensions\\1.9.0\\opentelemetry.api.providerbuilderextensions.1.9.0.nupkg.sha512",
@@ -51,8 +52,12 @@
     "C:\\Users\\Levi\\.nuget\\packages\\polly.core\\8.4.2\\polly.core.8.4.2.nupkg.sha512",
     "C:\\Users\\Levi\\.nuget\\packages\\polly.extensions\\8.4.2\\polly.extensions.8.4.2.nupkg.sha512",
     "C:\\Users\\Levi\\.nuget\\packages\\polly.ratelimiting\\8.4.2\\polly.ratelimiting.8.4.2.nupkg.sha512",
+    "C:\\Users\\Levi\\.nuget\\packages\\system.clientmodel\\1.1.0-beta.4\\system.clientmodel.1.1.0-beta.4.nupkg.sha512",
     "C:\\Users\\Levi\\.nuget\\packages\\system.diagnostics.diagnosticsource\\8.0.0\\system.diagnostics.diagnosticsource.8.0.0.nupkg.sha512",
     "C:\\Users\\Levi\\.nuget\\packages\\system.memory\\4.5.3\\system.memory.4.5.3.nupkg.sha512",
+    "C:\\Users\\Levi\\.nuget\\packages\\system.memory.data\\1.0.2\\system.memory.data.1.0.2.nupkg.sha512",
+    "C:\\Users\\Levi\\.nuget\\packages\\system.text.encodings.web\\4.7.2\\system.text.encodings.web.4.7.2.nupkg.sha512",
+    "C:\\Users\\Levi\\.nuget\\packages\\system.text.json\\4.7.2\\system.text.json.4.7.2.nupkg.sha512",
     "C:\\Users\\Levi\\.nuget\\packages\\system.threading.ratelimiting\\8.0.0\\system.threading.ratelimiting.8.0.0.nupkg.sha512"
   ],
   "logs": []

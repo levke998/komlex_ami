@@ -8,10 +8,11 @@
 - [ ] Role-based access (admin)
 
 ### Drawing Core
-- [ ] Canvas drawing (brush, eraser, colors)
+- [x] Canvas drawing (brush, eraser, colors)
 - [ ] Undo/Redo
 - [ ] Save & Load drawings
-- [ ] Layer system (visibility/lock/order)
+- [x] Layer system (visibility/lock/order)
+- [x] UI Polish (Dark Theme, Full Page Canvas, Shape Tools)
 
 ### AI Draw
 - [ ] Prompt → queued job → generated image

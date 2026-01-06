@@ -10,10 +10,11 @@
 using System;
 using System.Reflection;
 
+[assembly: Microsoft.Extensions.Configuration.UserSecrets.UserSecretsIdAttribute("54e27d92-893d-47ed-b663-8b5344bf8f90")]
 [assembly: System.Reflection.AssemblyCompanyAttribute("MagicDraw.Api")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+ed2f1c607e859cb8462e7b19f568d8bb0188a8c4")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+96836958db12331e1e38b7c8bdf18d93ff01070a")]
 [assembly: System.Reflection.AssemblyProductAttribute("MagicDraw.Api")]
 [assembly: System.Reflection.AssemblyTitleAttribute("MagicDraw.Api")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

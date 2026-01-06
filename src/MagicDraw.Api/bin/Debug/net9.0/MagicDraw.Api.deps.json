@@ -9,7 +9,8 @@
       "MagicDraw.Api/1.0.0": {
         "dependencies": {
           "MagicDraw.ServiceDefaults": "1.0.0",
-          "Microsoft.AspNetCore.OpenApi": "9.0.3"
+          "Microsoft.AspNetCore.OpenApi": "9.0.3",
+          "OpenAI": "2.0.0-beta.5"
         },
         "runtime": {
           "MagicDraw.Api.dll": {}
@@ -342,6 +343,17 @@
           }
         }
       },
+      "OpenAI/2.0.0-beta.5": {
+        "dependencies": {
+          "System.ClientModel": "1.1.0-beta.4"
+        },
+        "runtime": {
+          "lib/net6.0/OpenAI.dll": {
+            "assemblyVersion": "2.0.0.0",
+            "fileVersion": "2.0.0.0"
+          }
+        }
+      },
       "OpenTelemetry/1.9.0": {
         "dependencies": {
           "Microsoft.Extensions.Diagnostics.Abstractions": "9.0.0",
@@ -472,8 +484,34 @@
           }
         }
       },
+      "System.ClientModel/1.1.0-beta.4": {
+        "dependencies": {
+          "System.Memory.Data": "1.0.2",
+          "System.Text.Json": "4.7.2"
+        },
+        "runtime": {
+          "lib/net6.0/System.ClientModel.dll": {
+            "assemblyVersion": "1.1.0.0",
+            "fileVersion": "1.100.24.26606"
+          }
+        }
+      },
       "System.Diagnostics.DiagnosticSource/8.0.0": {},
       "System.Memory/4.5.3": {},
+      "System.Memory.Data/1.0.2": {
+        "dependencies": {
+          "System.Text.Encodings.Web": "4.7.2",
+          "System.Text.Json": "4.7.2"
+        },
+        "runtime": {
+          "lib/netstandard2.0/System.Memory.Data.dll": {
+            "assemblyVersion": "1.0.2.0",
+            "fileVersion": "1.0.221.20802"
+          }
+        }
+      },
+      "System.Text.Encodings.Web/4.7.2": {},
+      "System.Text.Json/4.7.2": {},
       "System.Threading.RateLimiting/8.0.0": {},
       "MagicDraw.ServiceDefaults/1.0.0": {
         "dependencies": {
@@ -752,6 +790,13 @@
       "path": "microsoft.openapi/1.6.17",
       "hashPath": "microsoft.openapi.1.6.17.nupkg.sha512"
     },
+    "OpenAI/2.0.0-beta.5": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-1s9Myw7G50qQ8LXhgsMefgbpVVEqXhUJ0u1qGRFYiysw/ycwHiIBluDOHhQHEOwBADny0QeadQ7NpcrrXRXt2g==",
+      "path": "openai/2.0.0-beta.5",
+      "hashPath": "openai.2.0.0-beta.5.nupkg.sha512"
+    },
     "OpenTelemetry/1.9.0": {
       "type": "package",
       "serviceable": true,
@@ -829,6 +874,13 @@
       "path": "polly.ratelimiting/8.4.2",
       "hashPath": "polly.ratelimiting.8.4.2.nupkg.sha512"
     },
+    "System.ClientModel/1.1.0-beta.4": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-TSzxsr0lU6ohBsSWXoJtLaI+Jl739f6I2eEAmAxTERxRmXs49kp/FwsUuXhjZ95Y7TcdbUi6Peb79TZhC/cBvg==",
+      "path": "system.clientmodel/1.1.0-beta.4",
+      "hashPath": "system.clientmodel.1.1.0-beta.4.nupkg.sha512"
+    },
     "System.Diagnostics.DiagnosticSource/8.0.0": {
       "type": "package",
       "serviceable": true,
@@ -842,6 +894,27 @@
       "sha512": "sha512-3oDzvc/zzetpTKWMShs1AADwZjQ/36HnsufHRPcOjyRAAMLDlu2iD33MBI2opxnezcVUtXyqDXXjoFMOU9c7SA==",
       "path": "system.memory/4.5.3",
       "hashPath": "system.memory.4.5.3.nupkg.sha512"
+    },
+    "System.Memory.Data/1.0.2": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-JGkzeqgBsiZwKJZ1IxPNsDFZDhUvuEdX8L8BDC8N3KOj+6zMcNU28CNN59TpZE/VJYy9cP+5M+sbxtWJx3/xtw==",
+      "path": "system.memory.data/1.0.2",
+      "hashPath": "system.memory.data.1.0.2.nupkg.sha512"
+    },
+    "System.Text.Encodings.Web/4.7.2": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-iTUgB/WtrZ1sWZs84F2hwyQhiRH6QNjQv2DkwrH+WP6RoFga2Q1m3f9/Q7FG8cck8AdHitQkmkXSY8qylcDmuA==",
+      "path": "system.text.encodings.web/4.7.2",
+      "hashPath": "system.text.encodings.web.4.7.2.nupkg.sha512"
+    },
+    "System.Text.Json/4.7.2": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-TcMd95wcrubm9nHvJEQs70rC0H/8omiSGGpU4FQ/ZA1URIqD4pjmFJh2Mfv1yH1eHgJDWTi2hMDXwTET+zOOyg==",
+      "path": "system.text.json/4.7.2",
+      "hashPath": "system.text.json.4.7.2.nupkg.sha512"
     },
     "System.Threading.RateLimiting/8.0.0": {
       "type": "package",

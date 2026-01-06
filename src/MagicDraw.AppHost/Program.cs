@@ -2,7 +2,7 @@ var builder = DistributedApplication.CreateBuilder(args);
 
 var api = builder.AddProject<Projects.MagicDraw_Api>("api");
 
-builder.AddNpmApp("web", "../MagicDraw.Web")
+builder.AddNpmApp("web", "../MagicDraw.Web", "dev")
     .WithReference(api)
     .WithHttpEndpoint(env: "PORT")
     .WithExternalHttpEndpoints();

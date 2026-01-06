@@ -61,3 +61,6 @@ D:\Egyetem\komplex_ami\komlex_ami\src\MagicDraw.Api\obj\Debug\net9.0\refint\Magi
 D:\Egyetem\komplex_ami\komlex_ami\src\MagicDraw.Api\obj\Debug\net9.0\MagicDraw.Api.pdb
 D:\Egyetem\komplex_ami\komlex_ami\src\MagicDraw.Api\obj\Debug\net9.0\MagicDraw.Api.genruntimeconfig.cache
 D:\Egyetem\komplex_ami\komlex_ami\src\MagicDraw.Api\obj\Debug\net9.0\ref\MagicDraw.Api.dll
+D:\Egyetem\komplex_ami\komlex_ami\src\MagicDraw.Api\bin\Debug\net9.0\OpenAI.dll
+D:\Egyetem\komplex_ami\komlex_ami\src\MagicDraw.Api\bin\Debug\net9.0\System.ClientModel.dll
+D:\Egyetem\komplex_ami\komlex_ami\src\MagicDraw.Api\bin\Debug\net9.0\System.Memory.Data.dll

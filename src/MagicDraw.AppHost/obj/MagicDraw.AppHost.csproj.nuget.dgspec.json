@@ -52,12 +52,12 @@
           "dependencies": {
             "Aspire.Dashboard.Sdk.win-x64": {
               "target": "Package",
-              "version": "[9.0.0, )",
+              "version": "[9.5.2, )",
               "autoReferenced": true
             },
             "Aspire.Hosting.AppHost": {
               "target": "Package",
-              "version": "[9.0.0, )"
+              "version": "[9.5.2, )"
             },
             "Aspire.Hosting.NodeJs": {
               "target": "Package",
@@ -65,7 +65,7 @@
             },
             "Aspire.Hosting.Orchestration.win-x64": {
               "target": "Package",
-              "version": "[9.0.0, )",
+              "version": "[9.5.2, )",
               "autoReferenced": true
             }
           },

@@ -21,6 +21,48 @@ DECISIONS:
 - Upgraded to .NET 9.0 to align with latest Aspire 9.0 features and SDK.
 - Used React+Vite for Frontend as planned.
 
+[2026-01-06 11:55] Antigravity
+DONE:
+- Implemented Canvas UI (DrawingPage, DrawingCanvas components).
+- Added TailwindCSS styling (Dark mode/Premium look).
+- Implemented basic Pencil tool with custom stroke color/width.
+- Added React Router for navigation.
+- Fixed SSL certificate warning in Aspire by upgrading AppHost package.
+
+DECISIONS:
+- Used native HTML5 Canvas for performance.
+- Downgraded to Tailwind v3 for stability with current Vite template.
+
+[2026-01-06 12:05] Antigravity
+DONE:
+- Implemented Layer Management System (CanvasStack, LayerRenderer).
+- Created Layer Panel UI (Add, Delete, Visibility, Opacity).
+- Refactored DrawingPage to support multi-layer state.
+- Verified build stability.
+- Fixed SSL reliability issues.
+
+- Implement AI Integration (Generate Image to Layer).
+- Implement Save/Load (Backend).
+
+[2026-01-06 12:25] Antigravity
+DONE:
+- Refactored UI to "Premium Dark" theme.
+- Added Top Toolbar and Right Sidebar.
+- Implemented Shape Tools (Rectangle, Circle) with preview.
+- Implemented Eraser tool.
+- Implemented Eraser tool.
+- Verified build.
+- Fixed Full Page Canvas layout.
+- Updated LayerPanel to Dark Mode.
+- Implemented Brush tool.
+- Implemented Layer Renaming and Reordering.
+- Polished Header UI (Icons, Layout).
+- Added Sidebar Toggle.
+
+- Implemented AI Generation (Backend & Frontend).
+- Secured OpenAI API Key in User Secrets.
+- Implemented "Soft Brush" physics.
+- Refactored AI Modal to be interactive.
+
 NEXT:
-- Implement Database (Postgres) in AppHost.
-- Implement Authentication.
+- Deploy? (Manual)

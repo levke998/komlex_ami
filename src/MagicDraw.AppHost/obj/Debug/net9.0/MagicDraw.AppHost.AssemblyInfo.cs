@@ -11,20 +11,21 @@ using System;
 using System.Reflection;
 
 [assembly: Microsoft.Extensions.Configuration.UserSecrets.UserSecretsIdAttribute("115c7822-92fd-44cf-a2ba-e2fa63aef1ed")]
-[assembly: System.Reflection.AssemblyMetadata("dcpclipath", ("C:\\Users\\Levi\\.nuget\\packages\\aspire.hosting.orchestration.win-x64\\9.0.0\\tools\\dc" +
+[assembly: System.Reflection.AssemblyMetadata("dcpclipath", ("C:\\Users\\Levi\\.nuget\\packages\\aspire.hosting.orchestration.win-x64\\9.5.2\\tools\\dc" +
     "p.exe"))]
-[assembly: System.Reflection.AssemblyMetadata("dcpextensionpaths", ("C:\\Users\\Levi\\.nuget\\packages\\aspire.hosting.orchestration.win-x64\\9.0.0\\tools\\ex" +
+[assembly: System.Reflection.AssemblyMetadata("dcpextensionpaths", ("C:\\Users\\Levi\\.nuget\\packages\\aspire.hosting.orchestration.win-x64\\9.5.2\\tools\\ex" +
     "t\\"))]
-[assembly: System.Reflection.AssemblyMetadata("dcpbinpath", ("C:\\Users\\Levi\\.nuget\\packages\\aspire.hosting.orchestration.win-x64\\9.0.0\\tools\\ex" +
+[assembly: System.Reflection.AssemblyMetadata("dcpbinpath", ("C:\\Users\\Levi\\.nuget\\packages\\aspire.hosting.orchestration.win-x64\\9.5.2\\tools\\ex" +
     "t\\bin\\"))]
 [assembly: System.Reflection.AssemblyMetadata("apphostprojectpath", "D:\\Egyetem\\komplex_ami\\komlex_ami\\src\\MagicDraw.AppHost")]
 [assembly: System.Reflection.AssemblyMetadata("apphostprojectname", "MagicDraw.AppHost.csproj")]
-[assembly: System.Reflection.AssemblyMetadata("aspiredashboardpath", ("C:\\Users\\Levi\\.nuget\\packages\\aspire.dashboard.sdk.win-x64\\9.0.0\\tools\\Aspire.Das" +
+[assembly: System.Reflection.AssemblyMetadata("aspiredashboardpath", ("C:\\Users\\Levi\\.nuget\\packages\\aspire.dashboard.sdk.win-x64\\9.5.2\\tools\\Aspire.Das" +
     "hboard.exe"))]
+[assembly: System.Reflection.AssemblyMetadataAttribute("apphostprojectbaseintermediateoutputpath", "D:\\Egyetem\\komplex_ami\\komlex_ami\\src\\MagicDraw.AppHost\\obj\\")]
 [assembly: System.Reflection.AssemblyCompanyAttribute("MagicDraw.AppHost")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+ed2f1c607e859cb8462e7b19f568d8bb0188a8c4")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+96836958db12331e1e38b7c8bdf18d93ff01070a")]
 [assembly: System.Reflection.AssemblyProductAttribute("MagicDraw.AppHost")]
 [assembly: System.Reflection.AssemblyTitleAttribute("MagicDraw.AppHost")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
