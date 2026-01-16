@@ -1,4 +1,5 @@
 using MagicDraw.Api.Infrastructure.Persistence;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,6 +14,13 @@ builder.Services.AddScoped<MagicDraw.Api.Services.OpenAIService>();
 builder.Services.AddOpenApi();
 
 var app = builder.Build();
+
+// Apply migrations on startup (Development only or safe environments)
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    await db.Database.MigrateAsync();
+}
 
 // Configure the HTTP request pipeline.
 app.UseCors(policy => policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());

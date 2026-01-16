@@ -1,3 +1,6 @@
+using System;
+using System.Collections.Generic;
+
 namespace MagicDraw.Api.Domain.Entities;
 
 public class User
@@ -7,4 +10,7 @@ public class User
     public string Email { get; set; } = string.Empty;
     public string PasswordHash { get; set; } = string.Empty;
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
+    public ICollection<Drawing> Drawings { get; set; } = new List<Drawing>();
+    public ICollection<AiGeneration> AiGenerations { get; set; } = new List<AiGeneration>();
 }
