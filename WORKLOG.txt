@@ -66,3 +66,17 @@ DONE:
 
 NEXT:
 - Deploy? (Manual)
+[2026-01-16 13:55] Antigravity
+DONE:
+- Structured Backend: Created `Application`, `Domain`, `Infrastructure` folders in `MagicDraw.Api`.
+- Created Tests: Initialized `MagicDraw.Tests` (xUnit, net9.0) and linked to Api.
+- Installed Dependencies: EF Core SQL Server (9.0.1), FluentValidation, xUnit packages.
+- Configured DB: Added `DefaultConnection` to `appsettings.json` and secured it via `.gitignore`.
+- Fixed Frontend: Installed `vite` globally and installed local dependencies for `MagicDraw.Web`.
+
+CHANGED:
+- Downgraded `MagicDraw.Tests` to net9.0 to match Api project.
+- Used specific versions (9.0.1) for EF Core to ensure compatibility.
+
+NEXT:
+- Implement Domain Entities.
