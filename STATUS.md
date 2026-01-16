@@ -27,5 +27,5 @@
 
 ## Architecture / Infrastructure
 - [x] Solution Setup (.NET Aspire)
-- [ ] Database Setup (Postgres)
+- [ ] Database Setup (MS Server)
 - [ ] Blob Storage Setup
