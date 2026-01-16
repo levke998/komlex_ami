@@ -1,12 +1,1 @@
-{
-  "Version": 1,
-  "Hash": "QOqsVRFXZ5OmD5NwtbkJo59ylSf0JVpbv9grs1zDNWM=",
-  "Source": "MagicDraw.Api",
-  "BasePath": "_content/MagicDraw.Api",
-  "Mode": "Default",
-  "ManifestType": "Build",
-  "ReferencedProjectsConfiguration": [],
-  "DiscoveryPatterns": [],
-  "Assets": [],
-  "Endpoints": []
-}
+{"Version":1,"Hash":"xbZTVB2nhXT+VLsFlKh23LFgmvoTZ1Y8lzoLYEB0niA=","Source":"MagicDraw.Api","BasePath":"/","Mode":"Root","ManifestType":"Build","ReferencedProjectsConfiguration":[],"DiscoveryPatterns":[],"Assets":[],"Endpoints":[]}

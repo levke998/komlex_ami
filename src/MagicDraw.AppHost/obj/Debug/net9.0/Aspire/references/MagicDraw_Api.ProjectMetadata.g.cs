@@ -15,5 +15,5 @@ public class MagicDraw_Api : global::Aspire.Hosting.IProjectMetadata
     /// <summary>
     /// The path to the MagicDraw_Api project.
     /// </summary>
-    public string ProjectPath => """D:\Egyetem\komplex_ami\komlex_ami\src\MagicDraw.Api\MagicDraw.Api.csproj""";
+    public string ProjectPath => """d:\www-c\komlex_ami\src\MagicDraw.Api\MagicDraw.Api.csproj""";
 }

@@ -11,21 +11,21 @@ using System;
 using System.Reflection;
 
 [assembly: Microsoft.Extensions.Configuration.UserSecrets.UserSecretsIdAttribute("115c7822-92fd-44cf-a2ba-e2fa63aef1ed")]
-[assembly: System.Reflection.AssemblyMetadata("dcpclipath", ("C:\\Users\\Levi\\.nuget\\packages\\aspire.hosting.orchestration.win-x64\\9.5.2\\tools\\dc" +
-    "p.exe"))]
-[assembly: System.Reflection.AssemblyMetadata("dcpextensionpaths", ("C:\\Users\\Levi\\.nuget\\packages\\aspire.hosting.orchestration.win-x64\\9.5.2\\tools\\ex" +
-    "t\\"))]
-[assembly: System.Reflection.AssemblyMetadata("dcpbinpath", ("C:\\Users\\Levi\\.nuget\\packages\\aspire.hosting.orchestration.win-x64\\9.5.2\\tools\\ex" +
-    "t\\bin\\"))]
-[assembly: System.Reflection.AssemblyMetadata("apphostprojectpath", "D:\\Egyetem\\komplex_ami\\komlex_ami\\src\\MagicDraw.AppHost")]
+[assembly: System.Reflection.AssemblyMetadata("dcpclipath", ("C:\\Users\\kulon\\.nuget\\packages\\aspire.hosting.orchestration.win-x64\\9.5.2\\tools\\d" +
+    "cp.exe"))]
+[assembly: System.Reflection.AssemblyMetadata("dcpextensionpaths", ("C:\\Users\\kulon\\.nuget\\packages\\aspire.hosting.orchestration.win-x64\\9.5.2\\tools\\e" +
+    "xt\\"))]
+[assembly: System.Reflection.AssemblyMetadata("dcpbinpath", ("C:\\Users\\kulon\\.nuget\\packages\\aspire.hosting.orchestration.win-x64\\9.5.2\\tools\\e" +
+    "xt\\bin\\"))]
+[assembly: System.Reflection.AssemblyMetadata("apphostprojectpath", "d:\\www-c\\komlex_ami\\src\\MagicDraw.AppHost")]
 [assembly: System.Reflection.AssemblyMetadata("apphostprojectname", "MagicDraw.AppHost.csproj")]
-[assembly: System.Reflection.AssemblyMetadata("aspiredashboardpath", ("C:\\Users\\Levi\\.nuget\\packages\\aspire.dashboard.sdk.win-x64\\9.5.2\\tools\\Aspire.Das" +
-    "hboard.exe"))]
-[assembly: System.Reflection.AssemblyMetadataAttribute("apphostprojectbaseintermediateoutputpath", "D:\\Egyetem\\komplex_ami\\komlex_ami\\src\\MagicDraw.AppHost\\obj\\")]
+[assembly: System.Reflection.AssemblyMetadata("aspiredashboardpath", ("C:\\Users\\kulon\\.nuget\\packages\\aspire.dashboard.sdk.win-x64\\9.5.2\\tools\\Aspire.Da" +
+    "shboard.exe"))]
+[assembly: System.Reflection.AssemblyMetadataAttribute("apphostprojectbaseintermediateoutputpath", "d:\\www-c\\komlex_ami\\src\\MagicDraw.AppHost\\obj\\")]
 [assembly: System.Reflection.AssemblyCompanyAttribute("MagicDraw.AppHost")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+96836958db12331e1e38b7c8bdf18d93ff01070a")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+ee8372978b23458d0f0c43c4964ee79d3efbb210")]
 [assembly: System.Reflection.AssemblyProductAttribute("MagicDraw.AppHost")]
 [assembly: System.Reflection.AssemblyTitleAttribute("MagicDraw.AppHost")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

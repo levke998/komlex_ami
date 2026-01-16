@@ -17,5 +17,5 @@ public class MagicDraw_AppHost
     /// <summary>
     /// The path to the Aspire Host project.
     /// </summary>
-    public static string ProjectPath => """D:\Egyetem\komplex_ami\komlex_ami\src\MagicDraw.AppHost""";
+    public static string ProjectPath => """d:\www-c\komlex_ami\src\MagicDraw.AppHost""";
 }
