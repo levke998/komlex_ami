@@ -149,6 +149,15 @@ DONE:
 - Verified solution build.
 - User verified application is working correctly.
 
+[2026-01-16 16:05] Antigravity
+DONE:
+- Refactored `MagicDraw.Api` from Minimal APIs to Controllers:
+  - Created `AiController` (`api/ai/generate`).
+  - Added `GenerateRequest` DTO.
+  - Removed `WeatherForecast` logic.
+  - Updated `Program.cs` to use `AddControllers()` and `MapControllers()`.
+- Verified build stability.
+
 
 
 
