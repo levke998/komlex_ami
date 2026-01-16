@@ -147,6 +147,15 @@ DONE:
 - Configured `MagicDraw.Api` to auto-apply migrations on startup.
 - Fixed Frontend `vite` startup issue by cleaning and reinstalling `node_modules` (restored missing binary).
 - Verified solution build.
+
+[2026-01-16 16:15] Antigravity
+DONE:
+- Created branch `feature/upgrade-tests`.
+- Upgraded testing stack in `MagicDraw.Tests`:
+  - Upgraded `xunit` to `xunit.v3` (v3.2.2).
+  - Updated `Microsoft.NET.Test.Sdk` (v18.0.1).
+- Implemented Unit Test `GenerateRequestTests` for DTO using xUnit v3.
+- Verified all tests pass.
 - User verified application is working correctly.
 
 [2026-01-16 16:05] Antigravity
