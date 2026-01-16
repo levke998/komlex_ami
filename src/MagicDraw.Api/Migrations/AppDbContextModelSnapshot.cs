@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace MagicDraw.Api.Infrastructure.Persistence.Migrations
+namespace MagicDraw.Api.Migrations
 {
     [DbContext(typeof(AppDbContext))]
     partial class AppDbContextModelSnapshot : ModelSnapshot
@@ -17,7 +17,7 @@ namespace MagicDraw.Api.Infrastructure.Persistence.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.1")
+                .HasAnnotation("ProductVersion", "10.0.2")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -28,21 +28,22 @@ namespace MagicDraw.Api.Infrastructure.Persistence.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime?>("CompletedAt")
-                        .HasColumnType("datetime2");
-
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("FailureReason")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Prompt")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("ResultUrl")
+                    b.Property<string>("ResultImageUrl")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
@@ -95,27 +96,30 @@ namespace MagicDraw.Api.Infrastructure.Persistence.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                    b.Property<string>("ConfigurationJson")
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Data")
-                        .IsRequired()
+                    b.Property<string>("Content")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid>("DrawingId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("ImageUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsLocked")
+                        .HasColumnType("bit");
+
                     b.Property<bool>("IsVisible")
                         .HasColumnType("bit");
 
-                    b.Property<float>("Opacity")
-                        .HasColumnType("real");
-
-                    b.Property<int>("Position")
+                    b.Property<int>("OrderIndex")
                         .HasColumnType("int");
 
-                    b.Property<int>("Type")
-                        .HasColumnType("int");
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -153,7 +157,7 @@ namespace MagicDraw.Api.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("MagicDraw.Api.Domain.Entities.AiGeneration", b =>
                 {
                     b.HasOne("MagicDraw.Api.Domain.Entities.User", "User")
-                        .WithMany()
+                        .WithMany("AiGenerations")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -164,7 +168,7 @@ namespace MagicDraw.Api.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("MagicDraw.Api.Domain.Entities.Drawing", b =>
                 {
                     b.HasOne("MagicDraw.Api.Domain.Entities.User", "User")
-                        .WithMany()
+                        .WithMany("Drawings")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -186,6 +190,13 @@ namespace MagicDraw.Api.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("MagicDraw.Api.Domain.Entities.Drawing", b =>
                 {
                     b.Navigation("Layers");
+                });
+
+            modelBuilder.Entity("MagicDraw.Api.Domain.Entities.User", b =>
+                {
+                    b.Navigation("AiGenerations");
+
+                    b.Navigation("Drawings");
                 });
 #pragma warning restore 612, 618
         }

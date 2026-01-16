@@ -18,7 +18,30 @@ public class AppDbContext : DbContext
     {
         base.OnModelCreating(modelBuilder);
 
-        // Explicitly configure enum conversions if necessary, but EF Core 9 handles them well.
-        // We can add configurations here later.
+        modelBuilder.Entity<User>()
+            .HasMany(u => u.Drawings)
+            .WithOne(d => d.User)
+            .HasForeignKey(d => d.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<User>()
+            .HasMany(u => u.AiGenerations) // If User has this collection
+            .WithOne(g => g.User)
+            .HasForeignKey(g => g.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<Drawing>()
+            .HasMany(d => d.Layers)
+            .WithOne(l => l.Drawing)
+            .HasForeignKey(l => l.DrawingId)
+            .OnDelete(DeleteBehavior.Cascade);
+            
+        modelBuilder.Entity<AiGeneration>()
+            .Property(a => a.Status)
+            .HasConversion<string>();
+            
+        modelBuilder.Entity<Layer>()
+            .Property(l => l.Type)
+            .HasConversion<string>();
     }
 }
