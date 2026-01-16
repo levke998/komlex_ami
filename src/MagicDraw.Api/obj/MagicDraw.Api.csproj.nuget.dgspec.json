@@ -1,23 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "D:\\Egyetem\\komplex_ami\\komlex_ami\\src\\MagicDraw.Api\\MagicDraw.Api.csproj": {}
+    "d:\\www-c\\komlex_ami\\src\\MagicDraw.Api\\MagicDraw.Api.csproj": {}
   },
   "projects": {
-    "D:\\Egyetem\\komplex_ami\\komlex_ami\\src\\MagicDraw.Api\\MagicDraw.Api.csproj": {
+    "d:\\www-c\\komlex_ami\\src\\MagicDraw.Api\\MagicDraw.Api.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\Egyetem\\komplex_ami\\komlex_ami\\src\\MagicDraw.Api\\MagicDraw.Api.csproj",
+        "projectUniqueName": "d:\\www-c\\komlex_ami\\src\\MagicDraw.Api\\MagicDraw.Api.csproj",
         "projectName": "MagicDraw.Api",
-        "projectPath": "D:\\Egyetem\\komplex_ami\\komlex_ami\\src\\MagicDraw.Api\\MagicDraw.Api.csproj",
-        "packagesPath": "C:\\Users\\Levi\\.nuget\\packages\\",
-        "outputPath": "D:\\Egyetem\\komplex_ami\\komlex_ami\\src\\MagicDraw.Api\\obj\\",
+        "projectPath": "d:\\www-c\\komlex_ami\\src\\MagicDraw.Api\\MagicDraw.Api.csproj",
+        "packagesPath": "C:\\Users\\kulon\\.nuget\\packages\\",
+        "outputPath": "d:\\www-c\\komlex_ami\\src\\MagicDraw.Api\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\Levi\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\kulon\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -26,14 +26,15 @@
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
           "net9.0": {
             "targetAlias": "net9.0",
             "projectReferences": {
-              "D:\\Egyetem\\komplex_ami\\komlex_ami\\src\\MagicDraw.ServiceDefaults\\MagicDraw.ServiceDefaults.csproj": {
-                "projectPath": "D:\\Egyetem\\komplex_ami\\komlex_ami\\src\\MagicDraw.ServiceDefaults\\MagicDraw.ServiceDefaults.csproj"
+              "d:\\www-c\\komlex_ami\\src\\MagicDraw.ServiceDefaults\\MagicDraw.ServiceDefaults.csproj": {
+                "projectPath": "d:\\www-c\\komlex_ami\\src\\MagicDraw.ServiceDefaults\\MagicDraw.ServiceDefaults.csproj"
               }
             }
           }
@@ -48,15 +49,43 @@
           "auditLevel": "low",
           "auditMode": "direct"
         },
-        "SdkAnalysisLevel": "9.0.200"
+        "SdkAnalysisLevel": "10.0.100"
       },
       "frameworks": {
         "net9.0": {
           "targetAlias": "net9.0",
           "dependencies": {
+            "FluentValidation": {
+              "target": "Package",
+              "version": "[12.1.1, )"
+            },
+            "FluentValidation.DependencyInjectionExtensions": {
+              "target": "Package",
+              "version": "[12.1.1, )"
+            },
             "Microsoft.AspNetCore.OpenApi": {
               "target": "Package",
               "version": "[9.0.3, )"
+            },
+            "Microsoft.EntityFrameworkCore": {
+              "target": "Package",
+              "version": "[9.0.1, )"
+            },
+            "Microsoft.EntityFrameworkCore.Design": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[9.0.1, )"
+            },
+            "Microsoft.EntityFrameworkCore.SqlServer": {
+              "target": "Package",
+              "version": "[9.0.1, )"
+            },
+            "Microsoft.EntityFrameworkCore.Tools": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[9.0.1, )"
             },
             "OpenAI": {
               "target": "Package",
@@ -82,24 +111,24 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.201/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.102/PortableRuntimeIdentifierGraph.json"
         }
       }
     },
-    "D:\\Egyetem\\komplex_ami\\komlex_ami\\src\\MagicDraw.ServiceDefaults\\MagicDraw.ServiceDefaults.csproj": {
+    "d:\\www-c\\komlex_ami\\src\\MagicDraw.ServiceDefaults\\MagicDraw.ServiceDefaults.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\Egyetem\\komplex_ami\\komlex_ami\\src\\MagicDraw.ServiceDefaults\\MagicDraw.ServiceDefaults.csproj",
+        "projectUniqueName": "d:\\www-c\\komlex_ami\\src\\MagicDraw.ServiceDefaults\\MagicDraw.ServiceDefaults.csproj",
         "projectName": "MagicDraw.ServiceDefaults",
-        "projectPath": "D:\\Egyetem\\komplex_ami\\komlex_ami\\src\\MagicDraw.ServiceDefaults\\MagicDraw.ServiceDefaults.csproj",
-        "packagesPath": "C:\\Users\\Levi\\.nuget\\packages\\",
-        "outputPath": "D:\\Egyetem\\komplex_ami\\komlex_ami\\src\\MagicDraw.ServiceDefaults\\obj\\",
+        "projectPath": "d:\\www-c\\komlex_ami\\src\\MagicDraw.ServiceDefaults\\MagicDraw.ServiceDefaults.csproj",
+        "packagesPath": "C:\\Users\\kulon\\.nuget\\packages\\",
+        "outputPath": "d:\\www-c\\komlex_ami\\src\\MagicDraw.ServiceDefaults\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\Levi\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\kulon\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -108,6 +137,7 @@
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -126,7 +156,7 @@
           "auditLevel": "low",
           "auditMode": "direct"
         },
-        "SdkAnalysisLevel": "9.0.200"
+        "SdkAnalysisLevel": "10.0.100"
       },
       "frameworks": {
         "net9.0": {
@@ -180,7 +210,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.201/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.102/PortableRuntimeIdentifierGraph.json"
         }
       }
     }

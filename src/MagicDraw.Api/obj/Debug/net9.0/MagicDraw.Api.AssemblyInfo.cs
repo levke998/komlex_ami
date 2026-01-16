@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("MagicDraw.Api")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+96836958db12331e1e38b7c8bdf18d93ff01070a")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+ee8372978b23458d0f0c43c4964ee79d3efbb210")]
 [assembly: System.Reflection.AssemblyProductAttribute("MagicDraw.Api")]
 [assembly: System.Reflection.AssemblyTitleAttribute("MagicDraw.Api")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
