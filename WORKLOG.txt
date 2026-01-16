@@ -92,3 +92,36 @@ DONE:
 NEXT:
 - Merge documentation updates.
 
+[2026-01-16 14:15] Antigravity
+DONE:
+- Implemented Domain Entities in `src/MagicDraw.Api/Domain`:
+  - `User`, `Drawing`, `Layer`, `AiGeneration`.
+- Defined Enums: `LayerType`, `AiGenerationStatus`.
+- Ensured all Entities use `Guid` as ID.
+
+NEXT:
+- Configure EF Core Context (DbSets, Configurations, Relationships).
+
+[2026-01-16 14:35] Antigravity
+DONE:
+- Integrated SQL Server with .NET Aspire (`Aspire.Hosting.SqlServer`).
+- Configured `MagicDraw.AppHost` to orchestrate SQL Server resource (`sqldata`).
+- Created `AppDbContext` and registered it in `MagicDraw.Api` via `AddSqlServerDbContext`.
+- Fixed local tooling issues by installing `dotnet-ef` (9.0.1).
+- Generated and Applied `InitialCreate` migration.
+- Updated `appsettings.json` to provide local connection string for design-time tools.
+- Resolved EF Core version conflict warnings.
+
+NEXT:
+- Merge feature/basic-models branch.
+
+[2026-01-16 14:45] Antigravity
+DONE:
+- Upgraded Solution to .NET 10 (`net10.0`).
+- Updated Aspire packages to v13.1.0 to resolve Orchestrator version requirements.
+- Updated `MagicDraw.AppHost`, `MagicDraw.ServiceDefaults`, `MagicDraw.Api`, `MagicDraw.Tests` to target `net10.0`.
+- Verified build stability.
+
+
+
+

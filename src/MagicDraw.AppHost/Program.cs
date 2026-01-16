@@ -1,6 +1,10 @@
 var builder = DistributedApplication.CreateBuilder(args);
 
-var api = builder.AddProject<Projects.MagicDraw_Api>("api");
+var sql = builder.AddSqlServer("sql")
+    .AddDatabase("sqldata");
+
+var api = builder.AddProject<Projects.MagicDraw_Api>("api")
+    .WithReference(sql);
 
 builder.AddNpmApp("web", "../MagicDraw.Web", "dev")
     .WithReference(api)

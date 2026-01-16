@@ -16,7 +16,7 @@ public class OpenAIService
     public async Task<string> GenerateImageAsync(string prompt)
     {
         // 1. Create Client
-        var client = new OpenAIClient(_apiKey);
+        var client = new OpenAIClient(new ApiKeyCredential(_apiKey));
         var imageClient = client.GetImageClient("dall-e-3");
 
         // 2. Generate
