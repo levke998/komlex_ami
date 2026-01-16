@@ -31,13 +31,13 @@ The project uses a microservice-like architecture orchestrated by **.NET Aspire*
 - **`MagicDraw.AppHost`**: Aspire orchestrator.
 - **`MagicDraw.ServiceDefaults`**: Aspire defaults, telemetry, service discovery.
 - **`MagicDraw.Api`**: Main ASP.NET Core Web API (Auth, Drawings, Layers, Social, Contests).
+  - Contains **Application**, **Domain**, and **Infrastructure** layers (Modular Monolith folder structure).
 - **`MagicDraw.AIWorker`**: Background worker for AI generation queues and async processing.
 - **`MagicDraw.Web`**: Frontend application (Drawing UI).
-- **`MagicDraw.Persistence`**: Database access, migrations, and repositories.
-- **`MagicDraw.Contracts`**: Shared DTOs and models.
+- **`MagicDraw.Tests`**: Unit and integration tests.
 
 ### Data Storage
-- **PostgreSQL**: Relational data (Users, Drawings, Layers, Contests).
+- **SQL Server**: Relational data (Users, Drawings, Layers, Contests).
 - **Azure Blob Storage** (or local emulator): Image assets and exports.
 - **Redis** (Optional): Rate limiting, caching, matchmaking queues.
 
