@@ -1,6 +1,9 @@
+using MagicDraw.Api.Infrastructure.Persistence;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.AddSqlServerDbContext<AppDbContext>("sqldata");
 builder.AddServiceDefaults();
 builder.Services.AddProblemDetails();
 builder.Services.AddCors();
