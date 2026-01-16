@@ -80,3 +80,15 @@ CHANGED:
 
 NEXT:
 - Implement Domain Entities.
+
+[2026-01-16 14:05] Antigravity
+DONE:
+- Refactored `README.md` Architecture Overview to match actual implementation:
+  - Specified `MagicDraw.Api` as a Modular Monolith (containing Application/Domain/Infrastructure).
+  - Replaced PostgreSQL with SQL Server.
+  - Removed references to non-existent `MagicDraw.Persistence` and `MagicDraw.Contracts` projects.
+  - Added `MagicDraw.Tests`.
+
+NEXT:
+- Merge documentation updates.
+
