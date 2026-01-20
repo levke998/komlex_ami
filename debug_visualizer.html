@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MagicDraw Debug Visualizer</title>
+    <style>
+        body { font-family: sans-serif; background: #222; color: #fff; display: flex; flex-direction: column; align-items: center; padding: 20px; }
+        textarea { width: 800px; height: 150px; background: #333; color: #eee; border: 1px solid #555; padding: 10px; margin-bottom: 20px; font-family: monospace; }
+        canvas { background: white; border: 2px solid #555; box-shadow: 0 0 20px rgba(0,0,0,0.5); max-width: 100%; border-radius: 4px; }
+        button { padding: 10px 20px; background: #007acc; color: white; border: none; cursor: pointer; font-size: 16px; margin-bottom: 20px; border-radius: 4px; }
+        button:hover { background: #005f9e; }
+        h1 { margin-bottom: 10px; }
+        .info { color: #aaa; margin-bottom: 20px; font-size: 14px; }
+    </style>
+</head>
+<body>
+
+    <h1>Debug Visualizer</h1>
+    <div class="info">Paste the JSON response from the API below to see it rendered.</div>
+
+    <textarea id="jsonInput" placeholder="Paste JSON here..."></textarea>
+    <button onclick="render()">Render Drawing</button>
+
+    <canvas id="canvas"></canvas>
+
+    <script>
+        function render() {
+            const input = document.getElementById('jsonInput').value;
+            const canvas = document.getElementById('canvas');
+            const ctx = canvas.getContext('2d');
+
+            try {
+                const data = JSON.parse(input);
+                
+                // Set dimensions
+                canvas.width = data.width;
+                canvas.height = data.height;
+                
+                // Clear
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                // Sort layers by order
+                const layers = data.layers || [];
+                layers.sort((a, b) => a.orderIndex - b.orderIndex);
+
+                layers.forEach(layer => {
+                    if (!layer.isVisible) return;
+
+                    let content = null;
+                    let config = null;
+
+                    try { content = layer.content ? JSON.parse(layer.content) : {}; } catch (e) { console.error("Bad content JSON", e); }
+                    try { config = layer.configurationJson ? JSON.parse(layer.configurationJson) : {}; } catch (e) { console.error("Bad config JSON", e); }
+
+                    ctx.save();
+                    
+                    if (config && config.opacity !== undefined) {
+                        ctx.globalAlpha = config.opacity;
+                    }
+                    if (config && config.blendMode) {
+                        ctx.globalCompositeOperation = config.blendMode.toLowerCase();
+                    }
+
+                    // Render based on type or content
+                    // 1. Fill
+                    if (content && content.type === 'fill') {
+                        ctx.fillStyle = content.color || 'white';
+                        ctx.fillRect(0, 0, canvas.width, canvas.height);
+                    }
+                    // 2. Stroke (Points)
+                    else if (content && content.points && content.points.length > 0) {
+                        ctx.beginPath();
+                        ctx.strokeStyle = content.color || 'black';
+                        ctx.lineWidth = content.width || 2;
+                        ctx.lineCap = 'round';
+                        ctx.lineJoin = 'round';
+
+                        const [first, ...rest] = content.points;
+                        ctx.moveTo(first[0], first[1]);
+                        rest.forEach(p => ctx.lineTo(p[0], p[1]));
+                        
+                        ctx.stroke();
+                    }
+                    // 3. Simple Image URL (mock)
+                    else if (layer.imageUrl) {
+                        // Drawing images requires async loading, simplistic text placeholder for now
+                        ctx.fillStyle = 'red';
+                        ctx.font = '24px sans-serif';
+                        ctx.fillText(`[Image: ${layer.imageUrl}]`, 20, 50);
+                    }
+
+                    ctx.restore();
+                });
+
+            } catch (e) {
+                alert("Error parsing JSON: " + e.message);
+            }
+        }
+    </script>
+</body>
+</html>

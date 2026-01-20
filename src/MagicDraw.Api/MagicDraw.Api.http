@@ -1,6 +1,59 @@
 @MagicDraw.Api_HostAddress = http://localhost:5298
 
-GET {{MagicDraw.Api_HostAddress}}/weatherforecast/
-Accept: application/json
+### 1. Create a User (Artist)
+POST {{MagicDraw.Api_HostAddress}}/api/users
+Content-Type: application/json
 
-###
+{
+  "username": "Vincent",
+  "email": "vincent@art.com",
+  "password": "password123"
+}
+
+### Variable: Set User Id (Copy from response above)
+@UserId = 81FB461A-C712-42D2-A687-4C46BAE3042E
+
+### 2. Create a Drawing (Canvas)
+POST {{MagicDraw.Api_HostAddress}}/api/drawings
+Content-Type: application/json
+
+{
+  "userId": "{{UserId}}",
+  "title": "Starry Night",
+  "width": 1920,
+  "height": 1080,
+  "isPublic": true
+}
+
+### Variable: Set Drawing Id (Copy from response above)
+@DrawingId = 42fa3314-3a77-4c60-8835-d203d9022e28
+
+### 3. Add a Background Layer (Fill)
+POST {{MagicDraw.Api_HostAddress}}/api/drawings/{{DrawingId}}/layers
+Content-Type: application/json
+
+{
+  "type": 0,
+  "orderIndex": 0,
+  "isVisible": true,
+  "isLocked": true,
+  "content": "{\"color\": \"#000033\", \"type\": \"fill\"}",
+  "configurationJson": "{\"opacity\": 1.0}"
+}
+
+### 4. Add a Stroke Layer (Stars)
+POST {{MagicDraw.Api_HostAddress}}/api/drawings/{{DrawingId}}/layers
+Content-Type: application/json
+
+{
+  "type": 0,
+  "orderIndex": 1,
+  "isVisible": true,
+  "isLocked": false,
+  "content": "{\"points\": [[10,10], [20,20], [30,15]], \"color\": \"#FFFF00\", \"width\": 5}",
+  "configurationJson": "{\"opacity\": 0.8, \"blendMode\": \"Screen\"}"
+}
+
+### 5. Get the Full Drawing
+GET {{MagicDraw.Api_HostAddress}}/api/drawings/{{DrawingId}}
+Accept: application/json

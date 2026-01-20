@@ -10,6 +10,8 @@ builder.Services.AddControllers(); // Enable Controllers
 builder.Services.AddProblemDetails();
 builder.Services.AddCors();
 builder.Services.AddScoped<MagicDraw.Api.Services.OpenAIService>();
+builder.Services.AddScoped<MagicDraw.Api.Application.Services.IUserService, MagicDraw.Api.Application.Services.UserService>();
+builder.Services.AddScoped<MagicDraw.Api.Application.Services.IDrawingService, MagicDraw.Api.Application.Services.DrawingService>();
 
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
