@@ -9,6 +9,7 @@ builder.AddSqlServerDbContext<AppDbContext>("sqldata");
 builder.AddServiceDefaults();
 builder.Services.AddControllers(); // Enable Controllers
 builder.Services.AddValidatorsFromAssemblyContaining<Program>();
+builder.Services.AddExceptionHandler<MagicDraw.Api.Infrastructure.ExceptionHandling.GlobalExceptionHandler>();
 builder.Services.AddProblemDetails();
 builder.Services.AddCors();
 builder.Services.AddScoped<MagicDraw.Api.Services.OpenAIService>();
