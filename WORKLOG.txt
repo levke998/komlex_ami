@@ -179,6 +179,18 @@ DONE:
 DECISIONS:
 - Switched to explicit validation in controllers instead of auto-validation for better control and testing.
 
+[2026-01-21 16:05] Antigravity
+DONE:
+- Implemented Global Exception Handling using `IExceptionHandler`.
+- Created custom exception classes (`NotFoundException`, `ConflictException`, `ForbiddenException`).
+- Implemented `GlobalExceptionHandler` to map exceptions to `ProblemDetails`.
+- Registered Exception Handler in `Program.cs`.
+- Verified implementation with `ExceptionIntegrationTests` using `NSubstitute`.
+
+DECISIONS:
+- Used `IExceptionHandler` (ASP.NET Core 8+) for centralized error handling.
+- Chose `ProblemDetails` as the standard error response format.
+
 
 
 
