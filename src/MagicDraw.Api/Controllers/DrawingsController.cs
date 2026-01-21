@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using MagicDraw.Api.Application.Dtos;
 using MagicDraw.Api.Application.Services;
 using Microsoft.AspNetCore.Mvc;
+using FluentValidation;
 
 namespace MagicDraw.Api.Controllers;
 
@@ -13,15 +14,31 @@ namespace MagicDraw.Api.Controllers;
 public class DrawingsController : ControllerBase
 {
     private readonly IDrawingService _drawingService;
+    private readonly IValidator<CreateDrawingRequest> _createDrawingValidator;
+    private readonly IValidator<CreateLayerRequest> _createLayerValidator;
+    private readonly IValidator<UpdateLayerRequest> _updateLayerValidator;
 
-    public DrawingsController(IDrawingService drawingService)
+    public DrawingsController(
+        IDrawingService drawingService,
+        IValidator<CreateDrawingRequest> createDrawingValidator,
+        IValidator<CreateLayerRequest> createLayerValidator,
+        IValidator<UpdateLayerRequest> updateLayerValidator)
     {
         _drawingService = drawingService;
+        _createDrawingValidator = createDrawingValidator;
+        _createLayerValidator = createLayerValidator;
+        _updateLayerValidator = updateLayerValidator;
     }
 
     [HttpPost]
     public async Task<ActionResult<DrawingResponse>> Create([FromBody] CreateDrawingRequest request, CancellationToken ct)
     {
+        var validationResult = await _createDrawingValidator.ValidateAsync(request, ct);
+        if (!validationResult.IsValid)
+        {
+            return BadRequest(validationResult.ToDictionary());
+        }
+
         var drawing = await _drawingService.CreateAsync(request.UserId, request, ct);
         return CreatedAtAction(nameof(GetById), new { id = drawing.Id }, drawing);
     }
@@ -56,6 +73,12 @@ public class DrawingsController : ControllerBase
     [HttpPost("{drawingId}/layers")]
     public async Task<ActionResult<LayerResponse>> AddLayer(Guid drawingId, [FromBody] CreateLayerRequest request, CancellationToken ct)
     {
+        var validationResult = await _createLayerValidator.ValidateAsync(request, ct);
+        if (!validationResult.IsValid)
+        {
+            return BadRequest(validationResult.ToDictionary());
+        }
+
         var layer = await _drawingService.AddLayerAsync(drawingId, request, ct);
         if (layer == null)
         {
@@ -70,6 +93,12 @@ public class DrawingsController : ControllerBase
     [HttpPut("{drawingId}/layers/{layerId}")]
     public async Task<ActionResult<LayerResponse>> UpdateLayer(Guid drawingId, Guid layerId, [FromBody] UpdateLayerRequest request, CancellationToken ct)
     {
+        var validationResult = await _updateLayerValidator.ValidateAsync(request, ct);
+        if (!validationResult.IsValid)
+        {
+            return BadRequest(validationResult.ToDictionary());
+        }
+
         var layer = await _drawingService.UpdateLayerAsync(drawingId, layerId, request, ct);
         if (layer == null)
         {

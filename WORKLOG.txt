@@ -167,6 +167,18 @@ DONE:
   - Updated `Program.cs` to use `AddControllers()` and `MapControllers()`.
 - Verified build stability.
 
+[2026-01-21 15:55] Antigravity
+DONE:
+- Implemented FluentValidation for all DTOs (Users, Drawings, Layers, AI).
+- Updated Controllers (Ai, Users, Drawings) to use explicit validation.
+- Registered Validation in Program.cs.
+- Added Unit Tests (ValidatorTests) and Integration Tests (ApiIntegrationTests).
+- Configured OpenAI API Key in appsettings.json.
+- Cleaned up Program.cs and removed manual validation logic.
+
+DECISIONS:
+- Switched to explicit validation in controllers instead of auto-validation for better control and testing.
+
 
 
 
