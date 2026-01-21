@@ -1,6 +1,8 @@
 using MagicDraw.Api.Application.Dtos;
 using MagicDraw.Api.Services;
 using Microsoft.AspNetCore.Mvc;
+using FluentValidation;
+using FluentValidation.Results;
 
 namespace MagicDraw.Api.Controllers;
 
@@ -9,17 +11,22 @@ namespace MagicDraw.Api.Controllers;
 public class AiController : ControllerBase
 {
     private readonly OpenAIService _aiService;
+    private readonly IValidator<GenerateRequest> _validator;
 
-    public AiController(OpenAIService aiService)
+    public AiController(OpenAIService aiService, IValidator<GenerateRequest> validator)
     {
         _aiService = aiService;
+        _validator = validator;
     }
 
     [HttpPost("generate")]
     public async Task<IActionResult> Generate([FromBody] GenerateRequest req)
     {
-        if (string.IsNullOrWhiteSpace(req.Prompt))
-            return BadRequest("Prompt is required");
+        var validationResult = await _validator.ValidateAsync(req);
+        if (!validationResult.IsValid)
+        {
+            return BadRequest(validationResult.ToDictionary());
+        }
 
         try
         {
