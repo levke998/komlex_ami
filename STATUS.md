@@ -28,5 +28,5 @@
 ## Architecture / Infrastructure
 - [x] Solution Setup (.NET Aspire)
 - [x] Database Configuration (Connection String & Dependencies)
-- [x] Backend Services & Controllers (User, Drawing, Layers)
+- [x] Backend Services & Controllers (User, Drawing, Layers, Auth)
 - [ ] Blob Storage Setup
