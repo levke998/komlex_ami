@@ -15,6 +15,27 @@ builder.Services.AddCors();
 builder.Services.AddScoped<MagicDraw.Api.Services.OpenAIService>();
 builder.Services.AddScoped<MagicDraw.Api.Application.Services.IUserService, MagicDraw.Api.Application.Services.UserService>();
 builder.Services.AddScoped<MagicDraw.Api.Application.Services.IDrawingService, MagicDraw.Api.Application.Services.DrawingService>();
+builder.Services.AddScoped<MagicDraw.Api.Application.Services.IAuthService, MagicDraw.Api.Application.Services.AuthService>();
+
+var jwtSettings = builder.Configuration.GetSection("JwtSettings");
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = jwtSettings["Issuer"],
+        ValidAudience = jwtSettings["Audience"],
+        IssuerSigningKey = new Microsoft.IdentityModel.Tokens.SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(jwtSettings["Secret"]!))
+    };
+});
 
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
@@ -35,6 +56,9 @@ if (!app.Environment.IsEnvironment("Testing"))
 app.UseCors(policy => policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
 
 app.UseExceptionHandler();
+
+app.UseAuthentication();
+app.UseAuthorization();
 
 if (app.Environment.IsDevelopment())
 {
