@@ -1,12 +1,34 @@
 @MagicDraw.Api_HostAddress = http://localhost:5298
 
-### 1. Create a User (Artist)
-POST {{MagicDraw.Api_HostAddress}}/api/users
+### 1. Register User
+POST {{MagicDraw.Api_HostAddress}}/api/auth/register
 Content-Type: application/json
 
 {
   "username": "Vincent",
   "email": "vincent@art.com",
+  "password": "password123"
+}
+
+### 2. Login User
+POST {{MagicDraw.Api_HostAddress}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "vincent@art.com",
+  "password": "password123"
+}
+
+### Variable: Set Token (Copy from response above if needed for future authenticated requests)
+@AuthToken = 
+
+### 3. Create a User (Legacy/Admin - Optional)
+POST {{MagicDraw.Api_HostAddress}}/api/users
+Content-Type: application/json
+
+{
+  "username": "VincentLegacy",
+  "email": "vincent_legacy@art.com",
   "password": "password123"
 }
 

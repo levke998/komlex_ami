@@ -3,7 +3,7 @@
 ## MVP Checklist
 
 ### Authentication
-- [ ] Register / Login / Logout
+- [x] Register / Login / Logout
 - [ ] Profile view/edit
 - [ ] Role-based access (admin)
 
@@ -28,5 +28,5 @@
 ## Architecture / Infrastructure
 - [x] Solution Setup (.NET Aspire)
 - [x] Database Configuration (Connection String & Dependencies)
-- [x] Backend Services & Controllers (User, Drawing, Layers)
+- [x] Backend Services & Controllers (User, Drawing, Layers, Auth)
 - [ ] Blob Storage Setup
