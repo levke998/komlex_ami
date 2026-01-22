@@ -209,3 +209,11 @@ DONE:
 
 NEXT:
 - Frontend Integration (Login Page, Store Token).
+
+[2026-01-22 13:35] Antigravity
+DONE:
+- Refactored `AuthIntegrationTests` for improved readability (extracted constants, helpers).
+- Updated all Integration Tests (`Auth`, `Api`, `Exception`) to use `TestContext.Current.CancellationToken` for proper cancellation support.
+- Verified all tests pass.
+- Committed changes.
+
