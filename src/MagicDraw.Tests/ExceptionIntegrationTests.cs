@@ -32,7 +32,7 @@ public class ExceptionIntegrationTests : IClassFixture<WebApplicationFactory<Pro
         // Arrange
         var mockUserService = Substitute.For<IUserService>();
         mockUserService.GetByIdAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>())
-            .Returns(Task.FromException<UserResponse>(new NotFoundException("User", "123")));
+            .Returns(Task.FromException<UserResponse?>(new NotFoundException("User", "123")));
 
         var client = _factory.WithWebHostBuilder(builder =>
         {
@@ -43,12 +43,12 @@ public class ExceptionIntegrationTests : IClassFixture<WebApplicationFactory<Pro
         }).CreateClient();
 
         // Act
-        var response = await client.GetAsync($"/api/users/{Guid.NewGuid()}");
+        var response = await client.GetAsync($"/api/users/{Guid.NewGuid()}", TestContext.Current.CancellationToken);
 
         // Assert
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
-        var problem = await response.Content.ReadFromJsonAsync<Microsoft.AspNetCore.Mvc.ProblemDetails>();
-        Assert.Equal("Not Found", problem.Title);
+        var problem = await response.Content.ReadFromJsonAsync<Microsoft.AspNetCore.Mvc.ProblemDetails>(cancellationToken: TestContext.Current.CancellationToken);
+        Assert.Equal("Not Found", problem!.Title);
     }
 
     [Fact]
@@ -69,11 +69,11 @@ public class ExceptionIntegrationTests : IClassFixture<WebApplicationFactory<Pro
 
         // Act
         var request = new CreateUserRequest("existing", "test@example.com", "password");
-        var response = await client.PostAsJsonAsync("/api/users", request);
+        var response = await client.PostAsJsonAsync("/api/users", request, TestContext.Current.CancellationToken);
 
         // Assert
         Assert.Equal(HttpStatusCode.Conflict, response.StatusCode);
-        var problem = await response.Content.ReadFromJsonAsync<Microsoft.AspNetCore.Mvc.ProblemDetails>();
-        Assert.Equal("Conflict", problem.Title);
+        var problem = await response.Content.ReadFromJsonAsync<Microsoft.AspNetCore.Mvc.ProblemDetails>(cancellationToken: TestContext.Current.CancellationToken);
+        Assert.Equal("Conflict", problem!.Title);
     }
 }

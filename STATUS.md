@@ -3,7 +3,7 @@
 ## MVP Checklist
 
 ### Authentication
-- [ ] Register / Login / Logout
+- [x] Register / Login / Logout
 - [ ] Profile view/edit
 - [ ] Role-based access (admin)
 

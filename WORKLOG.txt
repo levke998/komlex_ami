@@ -195,3 +195,17 @@ DECISIONS:
 
 
 
+
+[2026-01-22 13:25] Antigravity
+DONE:
+- Implemented Authentication System using JWT and BCrypt.
+- Added `BCrypt.Net-Next` and `Microsoft.AspNetCore.Authentication.JwtBearer` packages.
+- Created `AuthService` and `IAuthService`.
+- Created `AuthController` with `Register` and `Login` endpoints.
+- Added FluentValidation validators for Auth requests.
+- Updated `Program.cs` to register Auth services and middleware (`UseAuthentication`, `UseAuthorization`).
+- Created `AuthIntegrationTests` and verified 100% pass rate.
+- Updated `MagicDraw.Api.http` with Auth examples.
+
+NEXT:
+- Frontend Integration (Login Page, Store Token).
