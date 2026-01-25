@@ -1,22 +1,17 @@
 using System.Net;
 using System.Net.Http.Json;
 using MagicDraw.Api.Application.Dtos;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc.Testing;
 using Xunit;
 
 namespace MagicDraw.Tests;
 
-public class ApiIntegrationTests : IClassFixture<WebApplicationFactory<Program>>
+public class ApiIntegrationTests : IClassFixture<TestWebApplicationFactory>
 {
-    private readonly WebApplicationFactory<Program> _factory;
+    private readonly TestWebApplicationFactory _factory;
 
-    public ApiIntegrationTests(WebApplicationFactory<Program> factory)
+    public ApiIntegrationTests(TestWebApplicationFactory factory)
     {
-        _factory = factory.WithWebHostBuilder(builder =>
-        {
-            builder.UseEnvironment("Testing");
-        });
+        _factory = factory;
     }
 
     [Fact]

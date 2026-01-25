@@ -81,7 +81,7 @@ public class DrawingService : IDrawingService
 
         var layer = new Layer
         {
-            Id = Guid.Empty,
+            Id = Guid.NewGuid(),
             DrawingId = drawingId,
             Type = request.Type,
             OrderIndex = request.OrderIndex,

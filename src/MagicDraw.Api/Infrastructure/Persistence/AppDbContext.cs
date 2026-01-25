@@ -23,6 +23,12 @@ public class AppDbContext : DbContext
             .WithOne(d => d.User)
             .HasForeignKey(d => d.UserId)
             .OnDelete(DeleteBehavior.Cascade);
+        modelBuilder.Entity<User>()
+            .HasIndex(u => u.Email)
+            .IsUnique();
+        modelBuilder.Entity<User>()
+            .HasIndex(u => u.Username)
+            .IsUnique();
 
         modelBuilder.Entity<User>()
             .HasMany(u => u.AiGenerations) // If User has this collection

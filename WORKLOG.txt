@@ -217,3 +217,24 @@ DONE:
 - Verified all tests pass.
 - Committed changes.
 
+[2026-01-25 10:20] Antigravity
+DONE:
+- Fixed layer creation to generate new GUIDs (no PK collisions).
+- Returned lowercase `image` key from AI endpoint to match frontend.
+- Hardened User creation/update: BCrypt hashing, email/username uniqueness with ConflictException.
+- Added unique DB indexes for user email/username.
+- Adjusted middleware order to enforce HTTPS redirection before controllers.
+
+NEXT:
+- Align AuthController with global exception handler and expand auth protection on drawing endpoints.
+
+[2026-01-25 11:05] Antigravity
+DONE:
+- Enabled Testing environment to use EF InMemory instead of SQL Server (Program.cs) and added EFCore.InMemory package.
+- Added test web factory with seeded config for JWT/OpenAI; cleaned up provider conflicts.
+- Updated exception handler to return underlying error details to surface failures during tests.
+- Added logging to auth integration tests for easier diagnostics.
+- All tests now pass via `/mnt/c/Program Files/dotnet/dotnet.exe test src/MagicDraw.Tests/MagicDraw.Tests.csproj`.
+
+NEXT:
+- Consider tightening prod 500 error details once diagnostics stabilize; apply DB migration for unique indexes in real DB.

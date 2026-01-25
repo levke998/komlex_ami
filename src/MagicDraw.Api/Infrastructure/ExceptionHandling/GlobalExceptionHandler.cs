@@ -5,6 +5,7 @@ using MagicDraw.Api.Domain.Exceptions;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
 namespace MagicDraw.Api.Infrastructure.ExceptionHandling;
@@ -12,10 +13,12 @@ namespace MagicDraw.Api.Infrastructure.ExceptionHandling;
 public class GlobalExceptionHandler : IExceptionHandler
 {
     private readonly ILogger<GlobalExceptionHandler> _logger;
+    private readonly IHostEnvironment _env;
 
-    public GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logger)
+    public GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logger, IHostEnvironment env)
     {
         _logger = logger;
+        _env = env;
     }
 
     public async ValueTask<bool> TryHandleAsync(
@@ -53,7 +56,9 @@ public class GlobalExceptionHandler : IExceptionHandler
             default:
                 problemDetails.Status = StatusCodes.Status500InternalServerError;
                 problemDetails.Title = "Internal Server Error";
-                problemDetails.Detail = "An unexpected error occurred.";
+                problemDetails.Detail = _env.IsDevelopment() || _env.IsEnvironment("Testing")
+                    ? exception.Message
+                    : "An unexpected error occurred.";
                 break;
         }
 

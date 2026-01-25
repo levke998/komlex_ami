@@ -1,20 +1,21 @@
 using System.Net;
 using System.Net.Http.Json;
 using MagicDraw.Api.Application.Dtos;
-using Microsoft.AspNetCore.Mvc.Testing;
 using Xunit;
 
 namespace MagicDraw.Tests.Integration;
 
-public class AuthIntegrationTests : IClassFixture<WebApplicationFactory<Program>>
+public class AuthIntegrationTests : IClassFixture<TestWebApplicationFactory>
 {
     private readonly HttpClient _client;
     private const string RegisterEndpoint = "/api/auth/register";
     private const string LoginEndpoint = "/api/auth/login";
+    private readonly ITestOutputHelper _output;
 
-    public AuthIntegrationTests(WebApplicationFactory<Program> factory)
+    public AuthIntegrationTests(TestWebApplicationFactory factory, ITestOutputHelper output)
     {
         _client = factory.CreateClient();
+        _output = output;
     }
 
     [Fact]
@@ -27,6 +28,11 @@ public class AuthIntegrationTests : IClassFixture<WebApplicationFactory<Program>
         var response = await _client.PostAsJsonAsync(RegisterEndpoint, request, TestContext.Current.CancellationToken);
 
         // Assert
+        if (response.StatusCode != HttpStatusCode.OK)
+        {
+            var body = await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
+            _output.WriteLine($"Register response: {(int)response.StatusCode} {response.StatusCode} {body}");
+        }
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         
         var authResponse = await response.Content.ReadFromJsonAsync<AuthResponse>(cancellationToken: TestContext.Current.CancellationToken);
@@ -48,6 +54,11 @@ public class AuthIntegrationTests : IClassFixture<WebApplicationFactory<Program>
         var response = await _client.PostAsJsonAsync(LoginEndpoint, loginRequest, TestContext.Current.CancellationToken);
 
         // Assert
+        if (response.StatusCode != HttpStatusCode.OK)
+        {
+            var body = await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
+            _output.WriteLine($"Login response: {(int)response.StatusCode} {response.StatusCode} {body}");
+        }
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         
         var authResponse = await response.Content.ReadFromJsonAsync<AuthResponse>(cancellationToken: TestContext.Current.CancellationToken);
@@ -69,6 +80,11 @@ public class AuthIntegrationTests : IClassFixture<WebApplicationFactory<Program>
         var response = await _client.PostAsJsonAsync(LoginEndpoint, loginRequest, TestContext.Current.CancellationToken);
 
         // Assert
+        if (response.StatusCode != HttpStatusCode.Unauthorized)
+        {
+            var body = await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
+            _output.WriteLine($"Login invalid pwd response: {(int)response.StatusCode} {response.StatusCode} {body}");
+        }
         Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
     }
 

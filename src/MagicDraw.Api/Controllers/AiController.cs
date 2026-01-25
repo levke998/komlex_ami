@@ -31,7 +31,7 @@ public class AiController : ControllerBase
         try
         {
             var base64Image = await _aiService.GenerateImageAsync(req.Prompt);
-            return Ok(new { Image = $"data:image/png;base64,{base64Image}" });
+            return Ok(new { image = $"data:image/png;base64,{base64Image}" });
         }
         catch (Exception ex)
         {

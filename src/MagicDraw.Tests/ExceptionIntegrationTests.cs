@@ -5,8 +5,6 @@ using System.Threading;
 using MagicDraw.Api.Application.Dtos;
 using MagicDraw.Api.Application.Services;
 using MagicDraw.Api.Domain.Exceptions;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
 using NSubstitute;
@@ -14,16 +12,13 @@ using Xunit;
 
 namespace MagicDraw.Tests;
 
-public class ExceptionIntegrationTests : IClassFixture<WebApplicationFactory<Program>>
+public class ExceptionIntegrationTests : IClassFixture<TestWebApplicationFactory>
 {
-    private readonly WebApplicationFactory<Program> _factory;
+    private readonly TestWebApplicationFactory _factory;
 
-    public ExceptionIntegrationTests(WebApplicationFactory<Program> factory)
+    public ExceptionIntegrationTests(TestWebApplicationFactory factory)
     {
-        _factory = factory.WithWebHostBuilder(builder =>
-        {
-            builder.UseEnvironment("Testing");
-        });
+        _factory = factory;
     }
 
     [Fact]

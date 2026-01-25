@@ -4,6 +4,7 @@ using System.Text;
 using BCrypt.Net;
 using MagicDraw.Api.Application.Dtos;
 using MagicDraw.Api.Domain.Entities;
+using MagicDraw.Api.Domain.Exceptions;
 using MagicDraw.Api.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -27,12 +28,7 @@ public class AuthService : IAuthService
         // Check if email already exists
         if (await _context.Users.AnyAsync(u => u.Email == request.Email, cancellationToken))
         {
-            // Ideally use a custom exception here, but for now simple checking
-            // We should use ProblemDetails or Global Exception Handler. 
-            // Assuming ConflictException exists based on WORKLOG
-            // Wait, I need to check if ConflictException exists/was implemented in previous conversation
-            // Assuming it is, otherwise I'll throw standard exception for now as placeholder
-            throw new InvalidOperationException("User with this email already exists.");
+            throw new ConflictException("User with this email already exists.");
         }
 
         var passwordHash = BCrypt.Net.BCrypt.HashPassword(request.Password);

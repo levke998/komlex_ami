@@ -5,7 +5,15 @@ using FluentValidation;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.AddSqlServerDbContext<AppDbContext>("sqldata");
+if (builder.Environment.IsEnvironment("Testing"))
+{
+    builder.Services.AddDbContext<AppDbContext>(options =>
+        options.UseInMemoryDatabase("MagicDrawTests"));
+}
+else
+{
+    builder.AddSqlServerDbContext<AppDbContext>("sqldata");
+}
 builder.AddServiceDefaults();
 builder.Services.AddControllers(); // Enable Controllers
 builder.Services.AddValidatorsFromAssemblyContaining<Program>();
@@ -57,6 +65,8 @@ app.UseCors(policy => policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader())
 
 app.UseExceptionHandler();
 
+app.UseHttpsRedirection();
+
 app.UseAuthentication();
 app.UseAuthorization();
 
@@ -66,8 +76,6 @@ if (app.Environment.IsDevelopment())
 }
 
 app.MapControllers(); // Map Controllers
-
-app.UseHttpsRedirection();
 
 app.Run();
 
