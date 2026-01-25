@@ -5,6 +5,7 @@ using BCrypt.Net;
 using MagicDraw.Api.Application.Dtos;
 using MagicDraw.Api.Domain.Entities;
 using MagicDraw.Api.Domain.Exceptions;
+using MagicDraw.Api.Domain.Exceptions;
 using MagicDraw.Api.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -29,6 +30,10 @@ public class AuthService : IAuthService
         if (await _context.Users.AnyAsync(u => u.Email == request.Email, cancellationToken))
         {
             throw new ConflictException("User with this email already exists.");
+        }
+        if (await _context.Users.AnyAsync(u => u.Username == request.Username, cancellationToken))
+        {
+            throw new ConflictException("User with this username already exists.");
         }
 
         var passwordHash = BCrypt.Net.BCrypt.HashPassword(request.Password);

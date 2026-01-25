@@ -1,16 +1,20 @@
 using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
+using FluentValidation;
 using MagicDraw.Api.Application.Dtos;
 using MagicDraw.Api.Application.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using FluentValidation;
 
 namespace MagicDraw.Api.Controllers;
 
 [ApiController]
 [Route("api/drawings")]
+[Authorize]
 public class DrawingsController : ControllerBase
 {
     private readonly IDrawingService _drawingService;
@@ -39,14 +43,16 @@ public class DrawingsController : ControllerBase
             return BadRequest(validationResult.ToDictionary());
         }
 
-        var drawing = await _drawingService.CreateAsync(request.UserId, request, ct);
+        var userId = GetUserId();
+        var drawing = await _drawingService.CreateAsync(userId, request, ct);
         return CreatedAtAction(nameof(GetById), new { id = drawing.Id }, drawing);
     }
 
     [HttpGet("{id}")]
     public async Task<ActionResult<DrawingResponse>> GetById(Guid id, CancellationToken ct)
     {
-        var drawing = await _drawingService.GetByIdAsync(id, ct);
+        var userId = GetUserId();
+        var drawing = await _drawingService.GetByIdAsync(id, userId, ct);
         if (drawing == null)
         {
             return NotFound();
@@ -57,14 +63,16 @@ public class DrawingsController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<IReadOnlyList<DrawingListItemResponse>>> GetAll(CancellationToken ct)
     {
-        var drawings = await _drawingService.GetAllAsync(ct);
+        var userId = GetUserId();
+        var drawings = await _drawingService.GetAllAsync(userId, ct);
         return Ok(drawings);
     }
 
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(Guid id, CancellationToken ct)
     {
-        await _drawingService.DeleteAsync(id, ct);
+        var userId = GetUserId();
+        await _drawingService.DeleteAsync(id, userId, ct);
         return NoContent();
     }
 
@@ -79,7 +87,8 @@ public class DrawingsController : ControllerBase
             return BadRequest(validationResult.ToDictionary());
         }
 
-        var layer = await _drawingService.AddLayerAsync(drawingId, request, ct);
+        var userId = GetUserId();
+        var layer = await _drawingService.AddLayerAsync(drawingId, userId, request, ct);
         if (layer == null)
         {
             return NotFound("Drawing not found");
@@ -99,7 +108,8 @@ public class DrawingsController : ControllerBase
             return BadRequest(validationResult.ToDictionary());
         }
 
-        var layer = await _drawingService.UpdateLayerAsync(drawingId, layerId, request, ct);
+        var userId = GetUserId();
+        var layer = await _drawingService.UpdateLayerAsync(drawingId, layerId, userId, request, ct);
         if (layer == null)
         {
             return NotFound("Drawing or Layer not found");
@@ -110,11 +120,22 @@ public class DrawingsController : ControllerBase
     [HttpDelete("{drawingId}/layers/{layerId}")]
     public async Task<IActionResult> DeleteLayer(Guid drawingId, Guid layerId, CancellationToken ct)
     {
-        var result = await _drawingService.DeleteLayerAsync(drawingId, layerId, ct);
+        var userId = GetUserId();
+        var result = await _drawingService.DeleteLayerAsync(drawingId, layerId, userId, ct);
         if (!result)
         {
             return NotFound("Drawing or Layer not found");
         }
         return NoContent();
+    }
+
+    private Guid GetUserId()
+    {
+        var sub = User.FindFirstValue(JwtRegisteredClaimNames.Sub) ?? User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (sub == null || !Guid.TryParse(sub, out var userId))
+        {
+            throw new UnauthorizedAccessException("Invalid user identity.");
+        }
+        return userId;
     }
 }

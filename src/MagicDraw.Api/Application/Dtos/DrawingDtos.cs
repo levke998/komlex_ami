@@ -4,7 +4,6 @@ using System.Collections.Generic;
 namespace MagicDraw.Api.Application.Dtos;
 
 public record CreateDrawingRequest(
-    Guid UserId,
     string Title,
     int Width,
     int Height,

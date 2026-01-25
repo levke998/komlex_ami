@@ -46,7 +46,7 @@ public class ValidatorTests
     [Fact]
     public void CreateDrawingRequest_ShouldHaveError_WhenDimensionsAreInvalid()
     {
-        var model = new CreateDrawingRequest(System.Guid.NewGuid(), "Title", 0, 5000, true);
+        var model = new CreateDrawingRequest("Title", 0, 5000, true);
         var result = _drawingValidator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.Width);
         result.ShouldHaveValidationErrorFor(x => x.Height);
@@ -55,7 +55,7 @@ public class ValidatorTests
     [Fact]
     public void CreateDrawingRequest_ShouldNotHaveError_WhenDataIsValid()
     {
-        var model = new CreateDrawingRequest(System.Guid.NewGuid(), "Title", 800, 600, true);
+        var model = new CreateDrawingRequest("Title", 800, 600, true);
         var result = _drawingValidator.TestValidate(model);
         result.ShouldNotHaveAnyValidationErrors();
     }

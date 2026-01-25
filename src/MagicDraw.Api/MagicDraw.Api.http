@@ -40,7 +40,6 @@ POST {{MagicDraw.Api_HostAddress}}/api/drawings
 Content-Type: application/json
 
 {
-  "userId": "{{UserId}}",
   "title": "Starry Night",
   "width": 1920,
   "height": 1080,

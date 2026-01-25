@@ -5,16 +5,17 @@ using System.Threading;
 using System.Threading.Tasks;
 using MagicDraw.Api.Application.Dtos;
 using MagicDraw.Api.Domain.Entities;
+using MagicDraw.Api.Domain.Exceptions;
 using MagicDraw.Api.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 
 namespace MagicDraw.Api.Application.Services;
 
-public class DrawingService : IDrawingService
-{
-    private readonly AppDbContext _db;
+    public class DrawingService : IDrawingService
+    {
+        private readonly AppDbContext _db;
 
-    public DrawingService(AppDbContext db)
+        public DrawingService(AppDbContext db)
     {
         _db = db;
     }
@@ -39,20 +40,22 @@ public class DrawingService : IDrawingService
         return MapToResponse(drawing);
     }
 
-    public async Task<DrawingResponse?> GetByIdAsync(Guid id, CancellationToken ct)
+    public async Task<DrawingResponse?> GetByIdAsync(Guid id, Guid userId, CancellationToken ct)
     {
         var drawing = await _db.Drawings
             .AsNoTracking()
+            .Where(d => d.UserId == userId)
             .Include(d => d.Layers)
             .FirstOrDefaultAsync(d => d.Id == id, ct);
 
         return drawing == null ? null : MapToResponse(drawing);
     }
 
-    public async Task<IReadOnlyList<DrawingListItemResponse>> GetAllAsync(CancellationToken ct)
+    public async Task<IReadOnlyList<DrawingListItemResponse>> GetAllAsync(Guid userId, CancellationToken ct)
     {
         return await _db.Drawings
             .AsNoTracking()
+            .Where(d => d.UserId == userId)
             .OrderByDescending(d => d.CreatedAt)
             .Select(d => new DrawingListItemResponse(
                 d.Id,
@@ -67,17 +70,29 @@ public class DrawingService : IDrawingService
             .ToListAsync(ct);
     }
 
-    public async Task DeleteAsync(Guid id, CancellationToken ct)
+    public async Task DeleteAsync(Guid id, Guid userId, CancellationToken ct)
     {
-        await _db.Drawings.Where(d => d.Id == id).ExecuteDeleteAsync(ct);
+        var drawing = await _db.Drawings.FirstOrDefaultAsync(d => d.Id == id, ct);
+        if (drawing == null)
+        {
+            throw new NotFoundException("Drawing", id);
+        }
+        if (drawing.UserId != userId)
+        {
+            throw new ForbiddenException("You cannot delete this drawing.");
+        }
+
+        _db.Drawings.Remove(drawing);
+        await _db.SaveChangesAsync(ct);
     }
 
     // Layer Operations
 
-    public async Task<LayerResponse?> AddLayerAsync(Guid drawingId, CreateLayerRequest request, CancellationToken ct)
+    public async Task<LayerResponse?> AddLayerAsync(Guid drawingId, Guid userId, CreateLayerRequest request, CancellationToken ct)
     {
-        var drawing = await _db.Drawings.Include(d => d.Layers).FirstOrDefaultAsync(d => d.Id == drawingId, ct);
-        if (drawing == null) return null;
+        var drawing = await _db.Drawings.Include(d => d.Layers)
+            .FirstOrDefaultAsync(d => d.Id == drawingId && d.UserId == userId, ct);
+        if (drawing == null) return null; // either missing or unauthorized
 
         var layer = new Layer
         {
@@ -100,9 +115,10 @@ public class DrawingService : IDrawingService
         return MapToLayerResponse(layer);
     }
 
-    public async Task<LayerResponse?> UpdateLayerAsync(Guid drawingId, Guid layerId, UpdateLayerRequest request, CancellationToken ct)
+    public async Task<LayerResponse?> UpdateLayerAsync(Guid drawingId, Guid layerId, Guid userId, UpdateLayerRequest request, CancellationToken ct)
     {
-        var drawing = await _db.Drawings.Include(d => d.Layers).FirstOrDefaultAsync(d => d.Id == drawingId, ct);
+        var drawing = await _db.Drawings.Include(d => d.Layers)
+            .FirstOrDefaultAsync(d => d.Id == drawingId && d.UserId == userId, ct);
         if (drawing == null) return null;
 
         var layer = drawing.Layers.FirstOrDefault(l => l.Id == layerId);
@@ -121,9 +137,10 @@ public class DrawingService : IDrawingService
         return MapToLayerResponse(layer);
     }
 
-    public async Task<bool> DeleteLayerAsync(Guid drawingId, Guid layerId, CancellationToken ct)
+    public async Task<bool> DeleteLayerAsync(Guid drawingId, Guid layerId, Guid userId, CancellationToken ct)
     {
-        var drawing = await _db.Drawings.Include(d => d.Layers).FirstOrDefaultAsync(d => d.Id == drawingId, ct);
+        var drawing = await _db.Drawings.Include(d => d.Layers)
+            .FirstOrDefaultAsync(d => d.Id == drawingId && d.UserId == userId, ct);
         if (drawing == null) return false;
 
         var layer = drawing.Layers.FirstOrDefault(l => l.Id == layerId);

@@ -238,3 +238,14 @@ DONE:
 
 NEXT:
 - Consider tightening prod 500 error details once diagnostics stabilize; apply DB migration for unique indexes in real DB.
+
+[2026-01-25 11:40] Antigravity
+DONE:
+- Added JWT authorization to drawings & layer endpoints with ownership enforcement via token subject.
+- Removed userId from CreateDrawingRequest; draw/list/get now scoped to current user.
+- AuthController now relies on global exception handler; global handler maps Unauthorized and hides details outside Dev/Test.
+- AuthService checks username uniqueness.
+- Added integration tests for authz (authenticated create, unauthorized create, forbidden delete by non-owner) and made tests use in-memory DB seamlessly.
+
+NEXT:
+- Apply DB migration to real database (`dotnet ef database update`) to bring unique indexes live.
