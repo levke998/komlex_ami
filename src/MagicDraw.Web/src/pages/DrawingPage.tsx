@@ -4,12 +4,14 @@ import type { CanvasStackHandle, CanvasStackProps } from '../components/Canvas/C
 import { LayerPanel } from '../components/UI/LayerPanel';
 import type { Layer } from '../types/Layer';
 import type { ToolType } from '../types/Tool';
+import { useAuth } from '../context/AuthContext';
 
 export const DrawingPage: React.FC = () => {
     // Drawing State
     const [color, setColor] = useState('#22c55e');
     const [brushSize, setBrushSize] = useState(5);
     const [selectedTool, setSelectedTool] = useState<ToolType>('pencil');
+    const { token, user, logout } = useAuth();
 
     // Layer State
     const [layers, setLayers] = useState<Layer[]>([
@@ -89,11 +91,11 @@ export const DrawingPage: React.FC = () => {
             setActiveLayerId(newLayerId);
 
 
-            // Revert to proxy path (requires app restart to load vite.config.ts)
             const response = await fetch('/api/ai/generate', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    ...(token ? { Authorization: `Bearer ${token}` } : {})
                 },
                 body: JSON.stringify({ prompt })
             });
@@ -234,6 +236,19 @@ export const DrawingPage: React.FC = () => {
                     >
                         <span>📑</span> Layers
                     </button>
+
+                    {user && (
+                        <div className="flex items-center gap-2 text-slate-400 text-sm">
+                            <span className="px-2 py-1 rounded bg-slate-800 border border-slate-700">{user.username}</span>
+                            <button
+                                onClick={logout}
+                                className="text-red-300 hover:text-red-200 text-xs"
+                                title="Kijelentkezés"
+                            >
+                                Kilépés
+                            </button>
+                        </div>
+                    )}
                 </div>
             </header>
 

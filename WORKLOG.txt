@@ -249,3 +249,13 @@ DONE:
 
 NEXT:
 - Apply DB migration to real database (`dotnet ef database update`) to bring unique indexes live.
+
+[2026-01-25 12:30] Antigravity
+DONE:
+- Added frontend auth flow: AuthContext with localStorage, AuthPage (login/register), protected /draw route, user badge + logout in UI.
+- Auth API client added; AI requests send token when present.
+- Fixed migration to be idempotent when unique indexes are missing.
+- Reran backend tests (16/16 passing after stopping running dotnet host).
+
+NEXT:
+- Hook drawing save/load to secured API and remove unused old migration file if desired.
