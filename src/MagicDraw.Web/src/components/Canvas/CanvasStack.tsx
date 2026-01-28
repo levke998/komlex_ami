@@ -297,7 +297,7 @@ export const CanvasStack = forwardRef<CanvasStackHandle, CanvasStackProps>(({
     return (
         <div
             className="relative bg-white overflow-hidden cursor-crosshair select-none"
-            style={{ width: `${width}px`, height: `${height}px` }}
+            style={{ width: `${width}px`, height: `${height}px`, isolation: "isolate" }}
         >
             {/* Render Bottom-Up */}
             {layers.map((layer, index) => (
@@ -311,6 +311,8 @@ export const CanvasStack = forwardRef<CanvasStackHandle, CanvasStackProps>(({
                     height={physicalHeight}
                     isVisible={layer.isVisible}
                     opacity={layer.opacity}
+                    blendMode={layer.blendMode}
+                    filter={layer.filter}
                     zIndex={index}
                 />
             ))}

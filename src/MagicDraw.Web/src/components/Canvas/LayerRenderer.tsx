@@ -5,11 +5,13 @@ interface LayerRendererProps {
     height: number;
     isVisible: boolean;
     opacity: number;
+    blendMode?: string;
+    filter?: string;
     zIndex: number;
 }
 
 export const LayerRenderer = forwardRef<HTMLCanvasElement, LayerRendererProps>(
-    ({ width, height, isVisible, opacity, zIndex }, ref) => {
+    ({ width, height, isVisible, opacity, blendMode, filter, zIndex }, ref) => {
         // Handle High DPI scaling in a useEffect if needed, or assume parent handles logical/physical size.
         // For simplicity and consistency with previous DrawingCanvas, let's handle setting width/height attributes here.
 
@@ -24,6 +26,8 @@ export const LayerRenderer = forwardRef<HTMLCanvasElement, LayerRendererProps>(
                     height: `${height / (window.devicePixelRatio || 1)}px`,
                     visibility: isVisible ? 'visible' : 'hidden',
                     opacity: opacity,
+                    mixBlendMode: blendMode ?? 'normal',
+                    filter: filter ?? 'none',
                     zIndex: zIndex,
                     pointerEvents: 'none' // Important: input goes to interaction layer
                 }}

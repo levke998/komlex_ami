@@ -44,6 +44,37 @@ export const DrawingPage: React.FC = () => {
     { id: "minimal", label: "Minimal", hint: "Short and concise" },
   ];
   const [selectedRewriteId, setSelectedRewriteId] = useState<string>("professional");
+  const overlayPresets = [
+    {
+      id: "neon-fog",
+      label: "Neon Fog",
+      hint: "Vibrant haze",
+      prompt: "neon fog, glowing mist, volumetric light, soft gradients",
+      blendMode: "screen",
+      filterBoost: "saturate(1.35) brightness(1.15)",
+    },
+    {
+      id: "soft-glow",
+      label: "Soft Glow",
+      hint: "Gentle light",
+      prompt: "soft glow, diffuse bloom, dreamy haze, subtle gradients",
+      blendMode: "screen",
+      filterBoost: "saturate(1.2) brightness(1.05)",
+    },
+    {
+      id: "shadow-veil",
+      label: "Shadow Veil",
+      hint: "Moody overlay",
+      prompt: "dark mist, shadow veil, cinematic haze, low contrast",
+      blendMode: "multiply",
+      filterBoost: "saturate(0.9) brightness(0.9)",
+    },
+  ];
+  const [selectedOverlayId, setSelectedOverlayId] = useState<string>("neon-fog");
+  const [overlayOpacity, setOverlayOpacity] = useState(0.7);
+  const [overlayBlur, setOverlayBlur] = useState(12);
+  const [isGeneratingOverlay, setIsGeneratingOverlay] = useState(false);
+  const [aiMode, setAiMode] = useState<"image" | "glow">("image");
 
   // History for Undo/Redo
   const [history, setHistory] = useState<Layer[][]>([]);
@@ -221,6 +252,7 @@ export const DrawingPage: React.FC = () => {
           isLocked: l.isLocked,
           opacity: cfg.opacity ?? 1,
           blendMode: cfg.blendMode,
+          filter: cfg.filter,
           contentDataUrl: l.imageUrl ?? undefined,
         };
       });
@@ -290,6 +322,73 @@ export const DrawingPage: React.FC = () => {
       console.error(error);
       alert(`Error: ${error.message || "Unknown error occurred"}`);
       setIsGenerating(false);
+    }
+  };
+
+  const handleGenerateOverlay = async () => {
+    if (!prompt.trim()) return;
+    setIsGeneratingOverlay(true);
+    try {
+      const selectedOverlay = overlayPresets.find((s) => s.id === selectedOverlayId);
+      const overlayPromptParts = [
+        prompt,
+        selectedOverlay?.prompt,
+        "dark background",
+        "glowing highlights",
+        "soft blur",
+        "no text",
+      ].filter(Boolean);
+      const overlayPrompt = overlayPromptParts.join(". ");
+      const blendMode = selectedOverlay?.blendMode ?? "screen";
+      const filterBoost = selectedOverlay?.filterBoost ?? "saturate(1.2) brightness(1.05)";
+
+      const response = await fetch("/api/ai/generate", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        body: JSON.stringify({ prompt: overlayPrompt }),
+      });
+
+      if (!response.ok) {
+        const contentType = response.headers.get("content-type");
+        if (contentType && contentType.indexOf("application/json") !== -1) {
+          const errData = await response.json();
+          throw new Error(errData.detail || `Server Error: ${response.status} ${response.statusText}`);
+        } else {
+          const text = await response.text();
+          throw new Error(`Server Error: ${response.status} ${response.statusText} \n ${text.substring(0, 100)}`);
+        }
+      }
+
+      const data = await response.json();
+      const newLayerId = `layer-${Date.now()}`;
+      const newLayer: Layer = {
+        id: newLayerId,
+        name: `Glow: ${prompt.slice(0, 18)}...`,
+        isVisible: true,
+        opacity: overlayOpacity,
+        isLocked: true,
+        blendMode: blendMode,
+        filter: `blur(${overlayBlur}px) ${filterBoost}`,
+      };
+
+      pushHistory();
+      setLayers((prev) => [...prev, newLayer]);
+      setActiveLayerId(newLayerId);
+
+      setTimeout(() => {
+        if (canvasRef.current) {
+          canvasRef.current.addImage(data.image);
+        }
+        setIsGeneratingOverlay(false);
+        setIsAIModalOpen(false);
+      }, 100);
+    } catch (error: any) {
+      console.error(error);
+      alert(`Error: ${error.message || "Unknown error occurred"}`);
+      setIsGeneratingOverlay(false);
     }
   };
 
@@ -453,7 +552,7 @@ export const DrawingPage: React.FC = () => {
 
         {isAIModalOpen && (
           <div className="absolute inset-0 z-[9999] flex items-center justify-center bg-black/50 backdrop-blur-sm animate-in fade-in duration-200">
-            <div className="w-[500px] bg-[#2b2d3e] rounded-xl shadow-2xl border border-slate-700 overflow-hidden text-slate-200 animate-in zoom-in-95 duration-200">
+            <div className="w-[92vw] max-w-[560px] max-h-[90vh] bg-[#2b2d3e] rounded-xl shadow-2xl border border-slate-700 overflow-hidden text-slate-200 animate-in zoom-in-95 duration-200">
               <div className="flex items-center justify-between p-4 border-b border-slate-700 bg-[#2f3245]">
                 <div className="flex items-center gap-2">
                   <span className="text-xl">✨</span>
@@ -464,27 +563,109 @@ export const DrawingPage: React.FC = () => {
                 </button>
               </div>
 
-              <div className="p-6 space-y-6">
-                <div>
-                  <label className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 block">Style Preset</label>
-                  <div className="grid grid-cols-3 gap-2">
-                    {stylePresets.map((s) => (
-                      <button
-                        key={s.id}
-                        onClick={() => setSelectedStyleId(s.id)}
-                        className={`p-2 rounded-lg border text-left transition-all ${
-                          selectedStyleId === s.id
-                            ? "bg-indigo-600/20 border-indigo-500 text-indigo-200"
-                            : "bg-[#1e212b] border-slate-700 text-slate-400 hover:border-slate-500"
-                        }`}
-                        type="button"
-                      >
-                        <div className="text-xs font-semibold">{s.label}</div>
-                        <div className="text-[10px] text-slate-500">{s.hint}</div>
-                      </button>
-                    ))}
-                  </div>
+              <div className="p-5 sm:p-6 space-y-6 overflow-y-auto max-h-[calc(90vh-64px)]">
+                <div className="bg-[#1e212b] border border-slate-700/60 rounded-xl p-1 flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setAiMode("image")}
+                    className={`flex-1 px-3 py-2 rounded-lg text-xs font-semibold transition-all ${
+                      aiMode === "image" ? "bg-indigo-600 text-white shadow-md" : "text-slate-400 hover:text-white"
+                    }`}
+                  >
+                    Image
+                  </button>
+                  <div className="px-2 text-slate-500 text-sm">→</div>
+                  <button
+                    type="button"
+                    onClick={() => setAiMode("glow")}
+                    className={`flex-1 px-3 py-2 rounded-lg text-xs font-semibold transition-all ${
+                      aiMode === "glow" ? "bg-emerald-600 text-white shadow-md" : "text-slate-400 hover:text-white"
+                    }`}
+                  >
+                    Glow Overlay
+                  </button>
                 </div>
+
+                {aiMode === "image" && (
+                  <div>
+                    <label className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 block">Style Preset</label>
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                      {stylePresets.map((s) => (
+                        <button
+                          key={s.id}
+                          onClick={() => setSelectedStyleId(s.id)}
+                          className={`p-2 rounded-lg border text-left transition-all ${
+                            selectedStyleId === s.id
+                              ? "bg-indigo-600/20 border-indigo-500 text-indigo-200"
+                              : "bg-[#1e212b] border-slate-700 text-slate-400 hover:border-slate-500"
+                          }`}
+                          type="button"
+                        >
+                          <div className="text-xs font-semibold">{s.label}</div>
+                          <div className="text-[10px] text-slate-500">{s.hint}</div>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {aiMode === "glow" && (
+                  <div className="p-4 bg-[#1e212b] rounded-lg border border-slate-700/50">
+                    <div className="flex items-center justify-between mb-2">
+                      <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Glow Overlay</label>
+                      <span className="text-[10px] text-slate-500">Uses the prompt below</span>
+                    </div>
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                      {overlayPresets.map((s) => (
+                        <button
+                          key={s.id}
+                          onClick={() => setSelectedOverlayId(s.id)}
+                          className={`p-2 rounded-lg border text-left transition-all ${
+                            selectedOverlayId === s.id
+                              ? "bg-emerald-600/15 border-emerald-500 text-emerald-200"
+                              : "bg-[#141621] border-slate-700 text-slate-400 hover:border-slate-500"
+                          }`}
+                          type="button"
+                        >
+                          <div className="text-xs font-semibold">{s.label}</div>
+                          <div className="text-[10px] text-slate-500">{s.hint}</div>
+                        </button>
+                      ))}
+                    </div>
+                    <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <div className="space-y-1">
+                        <div className="flex items-center justify-between text-[10px] text-slate-500 uppercase">
+                          <span>Opacity</span>
+                          <span>{Math.round(overlayOpacity * 100)}%</span>
+                        </div>
+                        <input
+                          type="range"
+                          min="0.2"
+                          max="1"
+                          step="0.05"
+                          value={overlayOpacity}
+                          onChange={(e) => setOverlayOpacity(parseFloat(e.target.value))}
+                          className="w-full h-1.5 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-emerald-500"
+                        />
+                      </div>
+                      <div className="space-y-1">
+                        <div className="flex items-center justify-between text-[10px] text-slate-500 uppercase">
+                          <span>Blur</span>
+                          <span>{overlayBlur}px</span>
+                        </div>
+                        <input
+                          type="range"
+                          min="0"
+                          max="24"
+                          step="1"
+                          value={overlayBlur}
+                          onChange={(e) => setOverlayBlur(parseInt(e.target.value))}
+                          className="w-full h-1.5 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-emerald-500"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                )}
 
                 <div>
                   <label className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 block">Prompt</label>
@@ -498,7 +679,7 @@ export const DrawingPage: React.FC = () => {
 
                 <div>
                   <label className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 block">Prompt Enhancer</label>
-                  <div className="grid grid-cols-3 gap-2">
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                     {rewritePresets.map((s) => (
                       <button
                         key={s.id}
@@ -528,23 +709,37 @@ export const DrawingPage: React.FC = () => {
                   </button>
                 </div>
 
-                <button
-                  onClick={handleGenerateImage}
-                  disabled={isGenerating}
-                  className={`w-full py-3 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-bold rounded-lg shadow-lg flex items-center justify-center gap-2 transform transition-all ${
-                    isGenerating ? "opacity-50 cursor-not-allowed" : "hover:scale-[1.02]"
-                  }`}
-                >
-                  {isGenerating ? (
-                    <>
-                      <span>⌛</span> Generating...
-                    </>
-                  ) : (
-                    <>
-                      <span>🚀</span> Generate Image
-                    </>
-                  )}
-                </button>
+                {aiMode === "image" ? (
+                  <button
+                    onClick={handleGenerateImage}
+                    disabled={isGenerating}
+                    className={`w-full py-3 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-bold rounded-lg shadow-lg flex items-center justify-center gap-2 transform transition-all ${
+                      isGenerating ? "opacity-50 cursor-not-allowed" : "hover:scale-[1.02]"
+                    }`}
+                  >
+                    {isGenerating ? (
+                      <>
+                        <span>⌛</span> Generating...
+                      </>
+                    ) : (
+                      <>
+                        <span>🚀</span> Generate Image
+                      </>
+                    )}
+                  </button>
+                ) : (
+                  <button
+                    onClick={handleGenerateOverlay}
+                    disabled={isGeneratingOverlay || !prompt.trim()}
+                    className={`w-full py-3 rounded-lg border border-emerald-500/40 text-white shadow-md shadow-emerald-500/10 ${
+                      isGeneratingOverlay
+                        ? "opacity-60 bg-emerald-600/60"
+                        : "bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500"
+                    }`}
+                  >
+                    {isGeneratingOverlay ? "Generating overlay..." : "Generate Glow Overlay"}
+                  </button>
+                )}
 
                 <div className="p-4 bg-[#1e212b] rounded-lg border border-slate-700/50">
                   <h4 className="text-xs font-semibold text-slate-400 mb-2">Tips</h4>

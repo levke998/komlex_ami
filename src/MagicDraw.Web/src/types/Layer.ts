@@ -5,5 +5,6 @@ export interface Layer {
     opacity: number;
     isLocked?: boolean;
     blendMode?: string;
+    filter?: string;
     contentDataUrl?: string; // for save/load
 }

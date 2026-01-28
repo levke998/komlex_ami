@@ -47,6 +47,7 @@ function layerToPayload(layer: Layer, orderIndex: number) {
     configurationJson: JSON.stringify({
       opacity: layer.opacity,
       blendMode: layer.blendMode,
+      filter: layer.filter,
     }),
   };
 }
