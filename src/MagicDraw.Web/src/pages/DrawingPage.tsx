@@ -6,6 +6,7 @@ import type { Layer } from "../types/Layer";
 import type { ToolType } from "../types/Tool";
 import { useAuth } from "../context/AuthContext";
 import { saveDrawingWithLayers, getDrawing } from "../services/drawings";
+import { rewritePrompt } from "../services/ai";
 
 export const DrawingPage: React.FC = () => {
   // Drawing State
@@ -25,6 +26,7 @@ export const DrawingPage: React.FC = () => {
   const [isAIModalOpen, setIsAIModalOpen] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
   const [prompt, setPrompt] = useState("");
+  const [isRewriting, setIsRewriting] = useState(false);
   const stylePresets = [
     { id: "none", label: "None", hint: "No style", prompt: "" },
     { id: "sketch", label: "Sketch", hint: "Pencil / line art", prompt: "sketch style, pencil drawing, clean line art" },
@@ -34,6 +36,14 @@ export const DrawingPage: React.FC = () => {
     { id: "comic", label: "Comic", hint: "Ink + bold", prompt: "comic style, bold outlines, flat colors" },
   ];
   const [selectedStyleId, setSelectedStyleId] = useState<string>("none");
+  const rewritePresets = [
+    { id: "professional", label: "Professional", hint: "Clear and detailed" },
+    { id: "playful", label: "Playful", hint: "Creative and light" },
+    { id: "cinematic", label: "Cinematic", hint: "Film-like mood" },
+    { id: "random", label: "Random", hint: "Surprising twist" },
+    { id: "minimal", label: "Minimal", hint: "Short and concise" },
+  ];
+  const [selectedRewriteId, setSelectedRewriteId] = useState<string>("professional");
 
   // History for Undo/Redo
   const [history, setHistory] = useState<Layer[][]>([]);
@@ -177,7 +187,7 @@ export const DrawingPage: React.FC = () => {
   // Save/Load
   const handleSave = async () => {
     if (!token) {
-      alert("Jelentkezz be a mentéshez!");
+      alert("Please sign in to save.");
       return;
     }
     const state = canvasRef.current?.exportState() ?? [];
@@ -187,18 +197,18 @@ export const DrawingPage: React.FC = () => {
     });
     try {
       const id = await saveDrawingWithLayers(token, merged, canvasSize, "My Drawing");
-      alert(`Mentve: ${id}`);
+      alert(`Saved: ${id}`);
     } catch (e: any) {
-      alert(e.message || "Mentés sikertelen");
+      alert(e.message || "Save failed");
     }
   };
 
   const handleLoad = async () => {
     if (!token) {
-      alert("Jelentkezz be a betöltéshez!");
+      alert("Please sign in to load.");
       return;
     }
-    const drawingId = prompt("Rajz ID betöltéshez:");
+    const drawingId = prompt("Drawing ID to load:");
     if (!drawingId) return;
     try {
       const data = await getDrawing(token, drawingId);
@@ -220,7 +230,7 @@ export const DrawingPage: React.FC = () => {
       setHistory([]);
       setRedoStack([]);
     } catch (e: any) {
-      alert(e.message || "Betöltés sikertelen");
+      alert(e.message || "Load failed");
     }
   };
 
@@ -280,6 +290,19 @@ export const DrawingPage: React.FC = () => {
       console.error(error);
       alert(`Error: ${error.message || "Unknown error occurred"}`);
       setIsGenerating(false);
+    }
+  };
+
+  const handleRewrite = async () => {
+    if (!prompt.trim()) return;
+    setIsRewriting(true);
+    try {
+      const rewritten = await rewritePrompt(prompt, selectedRewriteId, token ?? undefined);
+      setPrompt(rewritten);
+    } catch (e: any) {
+      alert(e.message || "Prompt rewrite failed");
+    } finally {
+      setIsRewriting(false);
     }
   };
 
@@ -369,17 +392,17 @@ export const DrawingPage: React.FC = () => {
           </button>
 
           <button onClick={handleSave} className="px-3 py-1.5 rounded-lg text-xs bg-emerald-600 text-white">
-            Mentés
+            Save
           </button>
           <button onClick={handleLoad} className="px-3 py-1.5 rounded-lg text-xs bg-slate-600 text-white">
-            Betöltés
+            Load
           </button>
 
           {user && (
             <div className="flex items-center gap-2 text-slate-400 text-sm">
               <span className="px-2 py-1 rounded bg-slate-800 border border-slate-700">{user.username}</span>
-              <button onClick={logout} className="text-red-300 hover:text-red-200 text-xs" title="Kijelentkezés">
-                Kilépés
+              <button onClick={logout} className="text-red-300 hover:text-red-200 text-xs" title="Logout">
+                Logout
               </button>
             </div>
           )}
@@ -443,7 +466,7 @@ export const DrawingPage: React.FC = () => {
 
               <div className="p-6 space-y-6">
                 <div>
-                  <label className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 block">Style preset</label>
+                  <label className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 block">Style Preset</label>
                   <div className="grid grid-cols-3 gap-2">
                     {stylePresets.map((s) => (
                       <button
@@ -473,6 +496,38 @@ export const DrawingPage: React.FC = () => {
                   ></textarea>
                 </div>
 
+                <div>
+                  <label className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 block">Prompt Enhancer</label>
+                  <div className="grid grid-cols-3 gap-2">
+                    {rewritePresets.map((s) => (
+                      <button
+                        key={s.id}
+                        onClick={() => setSelectedRewriteId(s.id)}
+                        className={`p-2 rounded-lg border text-left transition-all ${
+                          selectedRewriteId === s.id
+                            ? "bg-emerald-600/20 border-emerald-500 text-emerald-200"
+                            : "bg-[#1e212b] border-slate-700 text-slate-400 hover:border-slate-500"
+                        }`}
+                        type="button"
+                      >
+                        <div className="text-xs font-semibold">{s.label}</div>
+                        <div className="text-[10px] text-slate-500">{s.hint}</div>
+                      </button>
+                    ))}
+                  </div>
+                  <button
+                    onClick={handleRewrite}
+                    disabled={isRewriting || !prompt.trim()}
+                    className={`mt-3 w-full py-2 rounded-lg border border-emerald-500/40 text-white shadow-md shadow-emerald-500/10 ${
+                      isRewriting
+                        ? "opacity-60 bg-emerald-600/60"
+                        : "bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500"
+                    }`}
+                  >
+                    {isRewriting ? "Enhancing..." : "Improve Prompt"}
+                  </button>
+                </div>
+
                 <button
                   onClick={handleGenerateImage}
                   disabled={isGenerating}
@@ -494,8 +549,8 @@ export const DrawingPage: React.FC = () => {
                 <div className="p-4 bg-[#1e212b] rounded-lg border border-slate-700/50">
                   <h4 className="text-xs font-semibold text-slate-400 mb-2">Tips</h4>
                   <ul className="text-xs text-slate-500 space-y-1 list-disc pl-4">
-                    <li>Legyél konkrét a stílusban (pl. "Oil painting", "Pixel art").</li>
-                    <li>Színek, fények megadása segít.</li>
+                    <li>Be specific about the style (e.g. "Oil painting", "Pixel art").</li>
+                    <li>Adding colors and lighting helps.</li>
                   </ul>
                 </div>
               </div>
