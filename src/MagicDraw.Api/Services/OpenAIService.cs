@@ -2,6 +2,8 @@ using OpenAI.Images;
 using OpenAI;
 using OpenAI.Chat;
 using System.ClientModel;
+using System.Text.Json;
+using System.Linq;
 
 namespace MagicDraw.Api.Services;
 
@@ -63,5 +65,78 @@ public class OpenAIService
         );
 
         return completion.ToString().Trim();
+    }
+
+    public async Task<(string Title, string Description)> GenerateCaptionAsync(
+        string? prompt,
+        string? notes,
+        int? layerCount,
+        bool? hasGlow,
+        string? style,
+        CancellationToken ct)
+    {
+        var client = new OpenAIClient(new ApiKeyCredential(_apiKey));
+        var chatClient = client.GetChatClient("gpt-4o-mini");
+
+        var system = "You generate a short title and one-sentence description for a digital artwork. " +
+                     "Return ONLY valid JSON: {\"title\":\"...\",\"description\":\"...\"}. " +
+                     "Title: 3-6 words. Description: max 160 characters.";
+
+        var user = string.Join("\n", new[]
+        {
+            $"Prompt: {prompt}",
+            $"Notes: {notes}",
+            $"Style preset: {style}",
+            $"Layers: {layerCount}",
+            $"Glow overlay: {hasGlow}"
+        });
+
+        ChatCompletion completion = await chatClient.CompleteChatAsync(
+            [
+                ChatMessage.CreateSystemMessage(system),
+                ChatMessage.CreateUserMessage(user)
+            ],
+            new ChatCompletionOptions { Temperature = 0.6f },
+            ct
+        );
+
+        var text = completion.ToString().Trim();
+        var title = "Untitled Artwork";
+        var description = text;
+
+        try
+        {
+            using var doc = JsonDocument.Parse(text);
+            if (doc.RootElement.TryGetProperty("title", out var titleProp))
+            {
+                title = titleProp.GetString() ?? title;
+            }
+            if (doc.RootElement.TryGetProperty("description", out var descProp))
+            {
+                description = descProp.GetString() ?? description;
+            }
+        }
+        catch
+        {
+            var lines = text.Split('\n', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+            foreach (var line in lines)
+            {
+                if (line.StartsWith("Title", StringComparison.OrdinalIgnoreCase))
+                {
+                    title = line.Split(':', 2).LastOrDefault()?.Trim() ?? title;
+                }
+                else if (line.StartsWith("Description", StringComparison.OrdinalIgnoreCase))
+                {
+                    description = line.Split(':', 2).LastOrDefault()?.Trim() ?? description;
+                }
+            }
+        }
+
+        if (string.IsNullOrWhiteSpace(description))
+        {
+            description = "A digital artwork inspired by your prompt.";
+        }
+
+        return (title.Trim(), description.Trim());
     }
 }

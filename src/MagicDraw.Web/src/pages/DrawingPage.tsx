@@ -6,7 +6,7 @@ import type { Layer } from "../types/Layer";
 import type { ToolType } from "../types/Tool";
 import { useAuth } from "../context/AuthContext";
 import { saveDrawingWithLayers, getDrawing } from "../services/drawings";
-import { rewritePrompt } from "../services/ai";
+import { rewritePrompt, generateCaption } from "../services/ai";
 
 export const DrawingPage: React.FC = () => {
   // Drawing State
@@ -75,6 +75,11 @@ export const DrawingPage: React.FC = () => {
   const [overlayBlur, setOverlayBlur] = useState(12);
   const [isGeneratingOverlay, setIsGeneratingOverlay] = useState(false);
   const [aiMode, setAiMode] = useState<"image" | "glow">("image");
+  const [captionNotes, setCaptionNotes] = useState("");
+  const [captionTitle, setCaptionTitle] = useState("");
+  const [captionDescription, setCaptionDescription] = useState("");
+  const [isCaptioning, setIsCaptioning] = useState(false);
+  const [isCaptionOpen, setIsCaptionOpen] = useState(false);
 
   // History for Undo/Redo
   const [history, setHistory] = useState<Layer[][]>([]);
@@ -239,7 +244,7 @@ export const DrawingPage: React.FC = () => {
       alert("Please sign in to load.");
       return;
     }
-    const drawingId = prompt("Drawing ID to load:");
+    const drawingId = window.prompt("Drawing ID to load:");
     if (!drawingId) return;
     try {
       const data = await getDrawing(token, drawingId);
@@ -405,6 +410,42 @@ export const DrawingPage: React.FC = () => {
     }
   };
 
+  const handleGenerateCaption = async () => {
+    const trimmedPrompt = prompt.trim();
+    const trimmedNotes = captionNotes.trim();
+    if (!trimmedPrompt && !trimmedNotes) return;
+    setIsCaptioning(true);
+    try {
+      const hasGlowLayer = layers.some((l) => (l.blendMode === "screen" || l.blendMode === "multiply") && l.filter?.includes("blur"));
+      const result = await generateCaption(
+        {
+          prompt: trimmedPrompt || undefined,
+          notes: trimmedNotes || undefined,
+          layerCount: layers.length,
+          hasGlow: hasGlowLayer,
+          style: selectedStyleId,
+        },
+        token ?? undefined
+      );
+      setCaptionTitle(result.title);
+      setCaptionDescription(result.description);
+    } catch (e: any) {
+      alert(e.message || "Caption generation failed");
+    } finally {
+      setIsCaptioning(false);
+    }
+  };
+
+  const handleCopyCaption = async () => {
+    const text = [captionTitle, captionDescription].filter(Boolean).join("\n");
+    if (!text) return;
+    try {
+      await navigator.clipboard.writeText(text);
+    } catch {
+      alert("Copy failed");
+    }
+  };
+
   const handleSizeChange = useCallback((size: { width: number; height: number }) => {
     setCanvasSize((prev) => (prev.width === size.width && prev.height === size.height ? prev : size));
   }, []);
@@ -495,6 +536,12 @@ export const DrawingPage: React.FC = () => {
           </button>
           <button onClick={handleLoad} className="px-3 py-1.5 rounded-lg text-xs bg-slate-600 text-white">
             Load
+          </button>
+          <button
+            onClick={() => setIsCaptionOpen(true)}
+            className="px-3 py-1.5 rounded-lg text-xs bg-slate-700/70 border border-slate-600 text-slate-200 hover:text-white"
+          >
+            📝 Caption
           </button>
 
           {user && (
@@ -748,6 +795,92 @@ export const DrawingPage: React.FC = () => {
                     <li>Adding colors and lighting helps.</li>
                   </ul>
                 </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {isCaptionOpen && (
+          <div className="absolute inset-0 z-[9998] flex justify-end">
+            <div
+              className="absolute inset-0 bg-black/30"
+              onClick={() => setIsCaptionOpen(false)}
+            ></div>
+            <div className="relative h-full w-[92vw] max-w-sm bg-[#1e212b] border-l border-slate-700 shadow-2xl p-5 sm:p-6 overflow-y-auto">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-2">
+                  <span className="text-lg">📝</span>
+                  <h3 className="font-semibold text-slate-200">Auto Caption</h3>
+                </div>
+                <button
+                  onClick={() => setIsCaptionOpen(false)}
+                  className="w-8 h-8 rounded-full flex items-center justify-center hover:bg-slate-700 text-slate-400 hover:text-white"
+                >
+                  ✕
+                </button>
+              </div>
+
+              <p className="text-xs text-slate-500 mb-4">
+                Generate a title and description for your drawing. Uses your prompt and optional notes.
+              </p>
+
+              <div className="space-y-3">
+                <div className="space-y-1">
+                  <label className="text-[10px] uppercase tracking-wider text-slate-500">Prompt Context (optional)</label>
+                  <textarea
+                    value={prompt}
+                    onChange={(e) => setPrompt(e.target.value)}
+                    className="w-full h-20 bg-[#141621] border border-slate-700 rounded-lg p-3 text-xs text-slate-200 placeholder-slate-600 focus:outline-none focus:border-indigo-500 transition-colors resize-none"
+                    placeholder="What is the drawing about?"
+                  ></textarea>
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-[10px] uppercase tracking-wider text-slate-500">Notes (optional)</label>
+                  <input
+                    value={captionNotes}
+                    onChange={(e) => setCaptionNotes(e.target.value)}
+                    className="w-full bg-[#141621] border border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-200 placeholder-slate-600 focus:outline-none focus:border-emerald-500 transition-colors"
+                    placeholder="Mood, colors, key elements..."
+                  />
+                </div>
+
+                <button
+                  onClick={handleGenerateCaption}
+                  disabled={isCaptioning || (!prompt.trim() && !captionNotes.trim())}
+                  className={`w-full py-2 rounded-lg border border-emerald-500/40 text-white shadow-md shadow-emerald-500/10 ${
+                    isCaptioning
+                      ? "opacity-60 bg-emerald-600/60"
+                      : "bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500"
+                  }`}
+                >
+                  {isCaptioning ? "Generating caption..." : "Generate Title + Description"}
+                </button>
+
+                <div className="flex items-center justify-between pt-2">
+                  <label className="text-[10px] uppercase tracking-wider text-slate-500">Result</label>
+                  <button
+                    type="button"
+                    onClick={handleCopyCaption}
+                    disabled={!captionTitle && !captionDescription}
+                    className="text-[10px] uppercase tracking-wider text-slate-400 hover:text-white disabled:opacity-40"
+                  >
+                    Copy
+                  </button>
+                </div>
+
+                <input
+                  value={captionTitle}
+                  onChange={(e) => setCaptionTitle(e.target.value)}
+                  className="w-full bg-[#141621] border border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-200 placeholder-slate-600 focus:outline-none focus:border-indigo-500 transition-colors"
+                  placeholder="Title will appear here..."
+                />
+                <textarea
+                  value={captionDescription}
+                  onChange={(e) => setCaptionDescription(e.target.value)}
+                  className="w-full h-24 bg-[#141621] border border-slate-700 rounded-lg p-3 text-xs text-slate-200 placeholder-slate-600 focus:outline-none focus:border-indigo-500 transition-colors resize-none"
+                  placeholder="Description will appear here..."
+                ></textarea>
               </div>
             </div>
           </div>
