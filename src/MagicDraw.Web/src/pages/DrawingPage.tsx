@@ -25,6 +25,15 @@ export const DrawingPage: React.FC = () => {
   const [isAIModalOpen, setIsAIModalOpen] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
   const [prompt, setPrompt] = useState("");
+  const stylePresets = [
+    { id: "none", label: "None", hint: "No style", prompt: "" },
+    { id: "sketch", label: "Sketch", hint: "Pencil / line art", prompt: "sketch style, pencil drawing, clean line art" },
+    { id: "pixel", label: "Pixel", hint: "Retro 8-bit", prompt: "pixel art, 8-bit, low resolution, crisp pixels" },
+    { id: "watercolor", label: "Watercolor", hint: "Soft wash", prompt: "watercolor painting, soft wash, paper texture" },
+    { id: "neon", label: "Neon", hint: "Glow / synth", prompt: "neon glow, synthwave, vibrant lighting, dark background" },
+    { id: "comic", label: "Comic", hint: "Ink + bold", prompt: "comic style, bold outlines, flat colors" },
+  ];
+  const [selectedStyleId, setSelectedStyleId] = useState<string>("none");
 
   // History for Undo/Redo
   const [history, setHistory] = useState<Layer[][]>([]);
@@ -220,6 +229,12 @@ export const DrawingPage: React.FC = () => {
     if (!prompt.trim()) return;
     setIsGenerating(true);
     try {
+      const selectedStyle = stylePresets.find((s) => s.id === selectedStyleId);
+      const finalPrompt =
+        selectedStyle && selectedStyle.prompt
+          ? `${selectedStyle.prompt}. ${prompt}`
+          : prompt;
+
       const newLayerId = `layer-${Date.now()}`;
       const newLayer: Layer = {
         id: newLayerId,
@@ -237,7 +252,7 @@ export const DrawingPage: React.FC = () => {
           "Content-Type": "application/json",
           ...(token ? { Authorization: `Bearer ${token}` } : {}),
         },
-        body: JSON.stringify({ prompt }),
+        body: JSON.stringify({ prompt: finalPrompt }),
       });
 
       if (!response.ok) {
@@ -427,6 +442,27 @@ export const DrawingPage: React.FC = () => {
               </div>
 
               <div className="p-6 space-y-6">
+                <div>
+                  <label className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 block">Style preset</label>
+                  <div className="grid grid-cols-3 gap-2">
+                    {stylePresets.map((s) => (
+                      <button
+                        key={s.id}
+                        onClick={() => setSelectedStyleId(s.id)}
+                        className={`p-2 rounded-lg border text-left transition-all ${
+                          selectedStyleId === s.id
+                            ? "bg-indigo-600/20 border-indigo-500 text-indigo-200"
+                            : "bg-[#1e212b] border-slate-700 text-slate-400 hover:border-slate-500"
+                        }`}
+                        type="button"
+                      >
+                        <div className="text-xs font-semibold">{s.label}</div>
+                        <div className="text-[10px] text-slate-500">{s.hint}</div>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
                 <div>
                   <label className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 block">Prompt</label>
                   <textarea
