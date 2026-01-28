@@ -9,6 +9,7 @@ interface LayerPanelProps {
     onSelectLayer: (id: string) => void;
     onToggleVisibility: (id: string) => void;
     onChangeOpacity: (id: string, opacity: number) => void;
+    onToggleLock?: (id: string) => void;
     onRenameLayer?: (id: string, newName: string) => void;
     onReorderLayers?: (fromIndex: number, toIndex: number) => void;
     darkMode?: boolean;
@@ -22,6 +23,7 @@ export const LayerPanel: React.FC<LayerPanelProps> = ({
     onSelectLayer,
     onToggleVisibility,
     onChangeOpacity,
+    onToggleLock,
     onRenameLayer,
     onReorderLayers,
     darkMode = false
@@ -147,6 +149,20 @@ export const LayerPanel: React.FC<LayerPanelProps> = ({
                         >
                             {layer.isVisible ? '👁️' : '🚫'}
                         </button>
+
+                        {/* Lock Toggle */}
+                        {onToggleLock && (
+                            <button
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    onToggleLock(layer.id);
+                                }}
+                                className="w-6 h-6 rounded flex items-center justify-center text-xs text-slate-500 hover:text-slate-200"
+                                title="Lock/Unlock layer"
+                            >
+                                {layer.isLocked ? '🔒' : '🔓'}
+                            </button>
+                        )}
 
                         {/* Layer Info */}
                         <div className="flex-1 min-w-0" onDoubleClick={() => handleStartRename(layer.id, layer.name)}>

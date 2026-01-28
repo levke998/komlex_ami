@@ -10,7 +10,9 @@ public class OpenAIService
 
     public OpenAIService(IConfiguration configuration)
     {
-        _apiKey = configuration["OpenAI:ApiKey"] ?? throw new InvalidOperationException("OpenAI:ApiKey not found.");
+        _apiKey = configuration["OpenAI:ApiKey"]
+                  ?? Environment.GetEnvironmentVariable("OPENAI_API_KEY")
+                  ?? throw new InvalidOperationException("OpenAI:ApiKey not found. Set OpenAI__ApiKey in config or OPENAI_API_KEY env variable.");
     }
 
     public async Task<string> GenerateImageAsync(string prompt)

@@ -3,5 +3,7 @@ export interface Layer {
     name: string;
     isVisible: boolean;
     opacity: number;
-    // Future: blendMode, isLocked, etc.
+    isLocked?: boolean;
+    blendMode?: string;
+    contentDataUrl?: string; // for save/load
 }

@@ -11,12 +11,21 @@ export interface CanvasStackProps {
     strokeColor: string;
     strokeWidth: number;
     tool: ToolType;
+    onCommit?: () => void; // called when a stroke/shape is finished
 }
 
 export interface CanvasStackHandle {
     addImage: (dataUrl: string) => void;
+    setLayerImage: (layerId: string, dataUrl: string) => void;
+    exportState: () => CanvasSerializedLayer[];
+    importState: (state: CanvasSerializedLayer[]) => void;
     snapshot: () => void;
 }
+
+export type CanvasSerializedLayer = {
+    layerId: string;
+    dataUrl: string;
+};
 
 export const CanvasStack = forwardRef<CanvasStackHandle, CanvasStackProps>(({
     width = 800,
@@ -25,7 +34,8 @@ export const CanvasStack = forwardRef<CanvasStackHandle, CanvasStackProps>(({
     activeLayerId,
     strokeColor,
     strokeWidth,
-    tool
+    tool,
+    onCommit
 }, ref) => {
     // Refs to store actual canvas elements for each layer
     const layerRefs = useRef<Map<string, HTMLCanvasElement>>(new Map());
@@ -53,6 +63,10 @@ export const CanvasStack = forwardRef<CanvasStackHandle, CanvasStackProps>(({
         const { offsetX, offsetY } = getCoordinates(e.nativeEvent);
         const x = offsetX * dpr;
         const y = offsetY * dpr;
+
+        // Prevent draw on locked layer
+        const activeLayer = layers.find(l => l.id === activeLayerId);
+        if (activeLayer?.isLocked) return;
 
         setStartPos({ x, y });
         setIsDrawing(true);
@@ -164,6 +178,7 @@ export const CanvasStack = forwardRef<CanvasStackHandle, CanvasStackProps>(({
             }
         }
         setIsDrawing(false);
+        onCommit?.();
     };
 
     const getCoordinates = (event: MouseEvent | TouchEvent) => {
@@ -238,6 +253,44 @@ export const CanvasStack = forwardRef<CanvasStackHandle, CanvasStackProps>(({
                 ctx.drawImage(img, x, y, drawWidth, drawHeight);
             };
             img.src = dataUrl;
+        },
+        setLayerImage: (layerId: string, dataUrl: string) => {
+            const canvas = layerRefs.current.get(layerId);
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            if (!ctx) return;
+
+            const img = new Image();
+            img.onload = () => {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                // Fill entire canvas
+                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            };
+            img.src = dataUrl;
+        },
+        exportState: () => {
+            const result: CanvasSerializedLayer[] = [];
+            layerRefs.current.forEach((canvas, layerId) => {
+                result.push({
+                    layerId,
+                    dataUrl: canvas.toDataURL()
+                });
+            });
+            return result;
+        },
+        importState: (state: CanvasSerializedLayer[]) => {
+            state.forEach(item => {
+                const canvas = layerRefs.current.get(item.layerId);
+                if (!canvas) return;
+                const ctx = canvas.getContext('2d');
+                if (!ctx) return;
+                const img = new Image();
+                img.onload = () => {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                };
+                img.src = item.dataUrl;
+            });
         }
     }));
 

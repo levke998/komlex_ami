@@ -5,7 +5,14 @@ using FluentValidation;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.AddSqlServerDbContext<AppDbContext>("sqldata");
+if (builder.Environment.IsEnvironment("Testing"))
+{
+    builder.Services.AddDbContext<AppDbContext>(options => options.UseInMemoryDatabase("MagicDrawTests"));
+}
+else
+{
+    builder.AddSqlServerDbContext<AppDbContext>("sqldata");
+}
 builder.AddServiceDefaults();
 builder.Services.AddControllers(); // Enable Controllers
 builder.Services.AddValidatorsFromAssemblyContaining<Program>();
