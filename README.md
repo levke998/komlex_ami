@@ -108,6 +108,13 @@ Tracks the Roadmap and MVP Checklist. **Must be updated when features are comple
 dotnet run --project ./src/MagicDraw.AppHost
 ```
 
+### Admin configuration
+To mark users as admins, set the `AdminUsers:Emails` list via environment variables:
+```bash
+export AdminUsers__Emails__0="admin@example.com"
+export AdminUsers__Emails__1="other@example.com"
+```
+
 ---
 
 ## 6) Contribution Checklists

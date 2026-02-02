@@ -13,6 +13,8 @@ public class AppDbContext : DbContext
     public DbSet<Drawing> Drawings { get; set; }
     public DbSet<Layer> Layers { get; set; }
     public DbSet<AiGeneration> AiGenerations { get; set; }
+    public DbSet<UserWarning> UserWarnings { get; set; }
+    public DbSet<AdminAuditLog> AdminAuditLogs { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -34,6 +36,12 @@ public class AppDbContext : DbContext
             .HasMany(u => u.AiGenerations) // If User has this collection
             .WithOne(g => g.User)
             .HasForeignKey(g => g.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<User>()
+            .HasMany(u => u.Warnings)
+            .WithOne(w => w.User)
+            .HasForeignKey(w => w.UserId)
             .OnDelete(DeleteBehavior.Cascade);
 
         modelBuilder.Entity<Drawing>()

@@ -15,5 +15,6 @@ public record RegisterRequest(
 
 public record AuthResponse(
     string Token,
-    UserResponse User
+    UserResponse User,
+    bool IsAdmin
 );

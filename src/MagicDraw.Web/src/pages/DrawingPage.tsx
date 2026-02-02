@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { CanvasStack } from "../components/Canvas/CanvasStack";
 import type { CanvasStackHandle, CanvasStackProps } from "../components/Canvas/CanvasStack";
 import { LayerPanel } from "../components/UI/LayerPanel";
@@ -6,6 +6,7 @@ import type { Layer } from "../types/Layer";
 import type { ToolType } from "../types/Tool";
 import { useAuth } from "../context/AuthContext";
 import { saveDrawingWithLayers, getDrawing } from "../services/drawings";
+import { getAdminDrawing } from "../services/admin";
 import { rewritePrompt, generateCaption } from "../services/ai";
 
 export const DrawingPage: React.FC = () => {
@@ -13,7 +14,7 @@ export const DrawingPage: React.FC = () => {
   const [color, setColor] = useState("#22c55e");
   const [brushSize, setBrushSize] = useState(5);
   const [selectedTool, setSelectedTool] = useState<ToolType>("pencil");
-  const { token, user, logout } = useAuth();
+  const { token, user, logout, isAdmin } = useAuth();
 
   // Layer State
   const [layers, setLayers] = useState<Layer[]>([
@@ -239,6 +240,27 @@ export const DrawingPage: React.FC = () => {
     }
   };
 
+  const applyDrawingData = (data: any) => {
+    const loadedLayers: Layer[] = data.layers.map((l: any, idx: number) => {
+      const cfg = l.configurationJson ? JSON.parse(l.configurationJson) : {};
+      return {
+        id: l.id,
+        name: l.name ?? `Layer ${idx + 1}`,
+        isVisible: l.isVisible,
+        isLocked: l.isLocked,
+        opacity: cfg.opacity ?? 1,
+        blendMode: cfg.blendMode,
+        filter: cfg.filter,
+        contentDataUrl: l.imageUrl ?? undefined,
+      };
+    });
+    setLayers(loadedLayers);
+    setActiveLayerId(loadedLayers[loadedLayers.length - 1]?.id ?? "");
+    restoreLayerImages(loadedLayers);
+    setHistory([]);
+    setRedoStack([]);
+  };
+
   const handleLoad = async () => {
     if (!token) {
       alert("Please sign in to load.");
@@ -248,28 +270,25 @@ export const DrawingPage: React.FC = () => {
     if (!drawingId) return;
     try {
       const data = await getDrawing(token, drawingId);
-      const loadedLayers: Layer[] = data.layers.map((l: any, idx: number) => {
-        const cfg = l.configurationJson ? JSON.parse(l.configurationJson) : {};
-        return {
-          id: l.id,
-          name: l.name ?? `Layer ${idx + 1}`,
-          isVisible: l.isVisible,
-          isLocked: l.isLocked,
-          opacity: cfg.opacity ?? 1,
-          blendMode: cfg.blendMode,
-          filter: cfg.filter,
-          contentDataUrl: l.imageUrl ?? undefined,
-        };
-      });
-      setLayers(loadedLayers);
-      setActiveLayerId(loadedLayers[loadedLayers.length - 1]?.id ?? "");
-      restoreLayerImages(loadedLayers);
-      setHistory([]);
-      setRedoStack([]);
+      applyDrawingData(data);
     } catch (e: any) {
       alert(e.message || "Load failed");
     }
   };
+
+  useEffect(() => {
+    if (!token) return;
+    const params = new URLSearchParams(window.location.search);
+    const adminDrawingId = params.get("adminDrawingId");
+    if (!adminDrawingId) return;
+    if (!isAdmin) {
+      alert("Admin access required to view this drawing.");
+      return;
+    }
+    getAdminDrawing(token, adminDrawingId)
+      .then((data) => applyDrawingData(data))
+      .catch((err) => alert(err?.message || "Failed to load admin drawing."));
+  }, [token, isAdmin]);
 
   // AI generate
   const handleGenerateImage = async () => {

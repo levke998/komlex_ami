@@ -1,6 +1,7 @@
 using MagicDraw.Api.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using FluentValidation;
+using MagicDraw.Api.Application.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,6 +24,12 @@ builder.Services.AddScoped<MagicDraw.Api.Services.OpenAIService>();
 builder.Services.AddScoped<MagicDraw.Api.Application.Services.IUserService, MagicDraw.Api.Application.Services.UserService>();
 builder.Services.AddScoped<MagicDraw.Api.Application.Services.IDrawingService, MagicDraw.Api.Application.Services.DrawingService>();
 builder.Services.AddScoped<MagicDraw.Api.Application.Services.IAuthService, MagicDraw.Api.Application.Services.AuthService>();
+builder.Services.AddScoped<MagicDraw.Api.Application.Services.IAdminService, MagicDraw.Api.Application.Services.AdminService>();
+builder.Services.Configure<AdminSettings>(builder.Configuration.GetSection("AdminUsers"));
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("AdminOnly", policy => policy.RequireClaim("is_admin", "true"));
+});
 
 var jwtSettings = builder.Configuration.GetSection("JwtSettings");
 builder.Services.AddAuthentication(options =>

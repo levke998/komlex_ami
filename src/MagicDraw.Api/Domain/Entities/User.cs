@@ -10,7 +10,11 @@ public class User
     public string Email { get; set; } = string.Empty;
     public string PasswordHash { get; set; } = string.Empty;
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    public bool IsBanned { get; set; }
+    public DateTime? BannedAt { get; set; }
+    public string? BanReason { get; set; }
 
     public ICollection<Drawing> Drawings { get; set; } = new List<Drawing>();
     public ICollection<AiGeneration> AiGenerations { get; set; } = new List<AiGeneration>();
+    public ICollection<UserWarning> Warnings { get; set; } = new List<UserWarning>();
 }

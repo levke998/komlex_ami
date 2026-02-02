@@ -1,12 +1,20 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { DrawingPage } from './pages/DrawingPage';
 import { AuthPage } from './pages/AuthPage';
+import { AdminPage } from './pages/AdminPage';
 import './App.css';
 import { useAuth } from './context/AuthContext';
 
 function ProtectedRoute({ children }: { children: JSX.Element }) {
   const { token } = useAuth();
   if (!token) return <Navigate to="/auth" replace />;
+  return children;
+}
+
+function AdminRoute({ children }: { children: JSX.Element }) {
+  const { token, isAdmin } = useAuth();
+  if (!token) return <Navigate to="/auth" replace />;
+  if (!isAdmin) return <Navigate to="/draw" replace />;
   return children;
 }
 
@@ -22,6 +30,14 @@ function App() {
             <ProtectedRoute>
               <DrawingPage />
             </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin"
+          element={
+            <AdminRoute>
+              <AdminPage />
+            </AdminRoute>
           }
         />
       </Routes>

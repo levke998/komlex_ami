@@ -5,7 +5,7 @@
 ### Authentication
 - [x] Register / Login / Logout
 - [ ] Profile view/edit
-- [ ] Role-based access (admin)
+- [x] Role-based access (admin)
 
 ### Drawing Core
 - [x] Canvas drawing (brush, eraser, colors)

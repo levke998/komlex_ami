@@ -259,3 +259,12 @@ DONE:
 
 NEXT:
 - Hook drawing save/load to secured API and remove unused old migration file if desired.
+
+[2026-02-02 18:15] Codex
+DONE:
+- Added admin audit log entity, migrations, and API endpoint.
+- Logged admin actions (ban/unban/warn/delete user, delete drawing).
+- Added admin logs tab and user search filter in admin UI.
+
+CHANGED:
+- Admin service endpoints now receive admin identity for audit logging.
