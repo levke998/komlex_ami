@@ -135,6 +135,11 @@ export const CanvasStack = forwardRef<CanvasStackHandle, CanvasStackProps>(({
             } else if (tool === 'circle') {
                 const radius = Math.sqrt(Math.pow(currentX - startPos.x, 2) + Math.pow(currentY - startPos.y, 2));
                 ctx.arc(startPos.x, startPos.y, radius, 0, 2 * Math.PI);
+            } else if (tool === 'triangle') {
+                ctx.moveTo(startPos.x + (currentX - startPos.x) / 2, startPos.y);
+                ctx.lineTo(startPos.x, currentY);
+                ctx.lineTo(currentX, currentY);
+                ctx.closePath();
             }
             ctx.stroke();
         }
@@ -170,6 +175,11 @@ export const CanvasStack = forwardRef<CanvasStackHandle, CanvasStackProps>(({
                 } else if (tool === 'circle') {
                     const radius = Math.sqrt(Math.pow(currentX - startPos.x, 2) + Math.pow(currentY - startPos.y, 2));
                     ctx.arc(startPos.x, startPos.y, radius, 0, 2 * Math.PI);
+                } else if (tool === 'triangle') {
+                    ctx.moveTo(startPos.x + (currentX - startPos.x) / 2, startPos.y);
+                    ctx.lineTo(startPos.x, currentY);
+                    ctx.lineTo(currentX, currentY);
+                    ctx.closePath();
                 }
                 ctx.stroke();
 

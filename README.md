@@ -49,7 +49,7 @@ The project uses a microservice-like architecture orchestrated by **.NET Aspire*
 A "Drawing" project contains:
 - **Metadata**: Title, visibility, dimensions.
 - **Layers**: 
-    - `stroke` (Vector strokes)
+    - `stroke` (Pencil, Brush, Eraser, Shapes: Rectangle, Circle, Triangle)
     - `image` (Uploaded assets)
     - `ai_image` (AI generated)
     - `text` (Optional)
