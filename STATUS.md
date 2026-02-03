@@ -25,6 +25,27 @@
 
 ---
 
+**Current Phase:** Stable / Debugging Complete
+**Last Updated:** 2026-01-06 14:15
+
+## Recent Completed Tasks
+- [x] Integrate AI Image Generation (OpenAI)
+- [x] Implement Soft Brush Physics
+- [x] **CRITICAL FIX**: Backend Startup & CORS Configuration
+- [x] **CRITICAL FIX**: App connectivity (Proxy vs Direct)
+- [x] **UI FIX**: Layer Data Persistence on Resize
+- [x] **UI FIX**: Opacity Slider Usability
+
+## Current Focus
+- Verification & Deployment Readiness
+
+## Known Issues
+- None (All critical blockers resolved).
+
+## Next Steps
+- User Testing
+- Database Integration (PostgreSQL) - *Deferred*
+
 ## Architecture / Infrastructure
 - [x] Solution Setup (.NET Aspire)
 - [x] Database Configuration (Connection String & Dependencies)
