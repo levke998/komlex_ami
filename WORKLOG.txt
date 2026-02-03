@@ -278,3 +278,20 @@ CHANGED:
 NEXT:
 - Continue with requested features.
 
+
+[2026-02-03 22:45] Antigravity
+DONE: Implemented Color Palette
+  - Added preset colors (Red, Dark Blue, Light Blue, Yellow) to DrawingPage toolbar.
+  - Implemented quick color selection buttons.
+DONE: Implemented Editable User Profile
+  - Extended User entity with Age, Gender, and ProfilePictureUrl.
+  - Added Ef Core migration 'AddUserProfileFields'.
+  - Updated UserDtos and AuthService to handle profile updates.
+  - Implemented PUT /api/auth/profile endpoint.
+  - Created Frontend ProfileModal for editing details and uploading avatar.
+  - Integrated ProfileModal into DrawingPage header (clickable username/avatar).
+FIXED: Startup Failures & Bugs
+  - Diagnosed and fixed file locking issues during build/run.
+  - Fixed AmbiguousMatchException in AuthController by removing duplicate Route attribute.
+  - Resolved database connection string missing/port issues (updated to port 65410).
+

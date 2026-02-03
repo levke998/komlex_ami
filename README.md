@@ -50,6 +50,7 @@ A "Drawing" project contains:
 - **Metadata**: Title, visibility, dimensions.
 - **Layers**: 
     - `stroke` (Pencil, Brush, Eraser, Shapes: Rectangle, Circle, Triangle)
+    - `palette` (Presets: Red, Dark Blue, Light Blue, Yellow)
     - `image` (Uploaded assets)
     - `ai_image` (AI generated)
     - `text` (Optional)

@@ -1,10 +1,21 @@
 import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
-import type { AuthResponse, AuthUser } from "../services/auth";
+import type { AuthResponse } from "../services/auth";
+
+export type AuthUser = {
+  id: string;
+  username: string;
+  email: string;
+  createdAt: string;
+  age?: number;
+  gender?: string;
+  profilePictureUrl?: string;
+};
 
 type AuthState = {
   user: AuthUser | null;
   token: string | null;
   login: (resp: AuthResponse) => void;
+  updateUser: (user: AuthUser) => void;
   logout: () => void;
 };
 
@@ -35,13 +46,21 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     localStorage.setItem(STORAGE_KEY, JSON.stringify(resp));
   };
 
+  const updateUser = (updatedUser: AuthUser) => {
+    setUser(updatedUser);
+    if (token) {
+      const stored = { token, user: updatedUser };
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(stored));
+    }
+  };
+
   const logout = () => {
     setUser(null);
     setToken(null);
     localStorage.removeItem(STORAGE_KEY);
   };
 
-  const value = useMemo(() => ({ user, token, login, logout }), [user, token]);
+  const value = useMemo(() => ({ user, token, login, updateUser, logout }), [user, token]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };

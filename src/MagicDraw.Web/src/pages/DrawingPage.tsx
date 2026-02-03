@@ -2,6 +2,7 @@ import React, { useCallback, useRef, useState } from "react";
 import { CanvasStack } from "../components/Canvas/CanvasStack";
 import type { CanvasStackHandle, CanvasStackProps } from "../components/Canvas/CanvasStack";
 import { LayerPanel } from "../components/UI/LayerPanel";
+import { ProfileModal } from "../components/UI/ProfileModal";
 import type { Layer } from "../types/Layer";
 import type { ToolType } from "../types/Tool";
 import { useAuth } from "../context/AuthContext";
@@ -24,6 +25,7 @@ export const DrawingPage: React.FC = () => {
   // UI State
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isAIModalOpen, setIsAIModalOpen] = useState(false);
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
   const [prompt, setPrompt] = useState("");
   const [isRewriting, setIsRewriting] = useState(false);
@@ -44,6 +46,15 @@ export const DrawingPage: React.FC = () => {
     { id: "minimal", label: "Minimal", hint: "Short and concise" },
   ];
   const [selectedRewriteId, setSelectedRewriteId] = useState<string>("professional");
+
+  // Color Presets
+  const colorPresets = [
+    { color: "#ef4444", title: "Red" },
+    { color: "#1e3a8a", title: "Dark Blue" },
+    { color: "#3b82f6", title: "Light Blue" },
+    { color: "#facc15", title: "Yellow" },
+  ];
+
   const overlayPresets = [
     {
       id: "neon-fog",
@@ -501,12 +512,25 @@ export const DrawingPage: React.FC = () => {
         <div className="flex items-center gap-6">
           {/* Color & Size */}
           <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2 bg-[#1e212b] px-3 py-1.5 rounded-lg border border-slate-700/50">
-              <div className="w-6 h-6 rounded-md border border-slate-500/50" style={{ backgroundColor: color }}></div>
-              <input type="color" value={color} onChange={(e) => setColor(e.target.value)} className="w-0 h-0 opacity-0 absolute" id="color-input" />
-              <label htmlFor="color-input" className="text-xs font-medium cursor-pointer hover:text-white transition-colors">
-                {color}
-              </label>
+            <div className="flex items-center gap-1">
+              {colorPresets.map((preset) => (
+                <button
+                  key={preset.color}
+                  onClick={() => setColor(preset.color)}
+                  className={`w-6 h-6 rounded-full border border-slate-600 transition-transform hover:scale-110 ${color === preset.color ? "ring-2 ring-white" : ""
+                    }`}
+                  style={{ backgroundColor: preset.color }}
+                  title={preset.title}
+                />
+              ))}
+              <div className="w-[1px] h-6 bg-slate-700 mx-2"></div>
+              <div className="flex items-center gap-2 bg-[#1e212b] px-3 py-1.5 rounded-lg border border-slate-700/50">
+                <div className="w-6 h-6 rounded-md border border-slate-500/50" style={{ backgroundColor: color }}></div>
+                <input type="color" value={color} onChange={(e) => setColor(e.target.value)} className="w-0 h-0 opacity-0 absolute" id="color-input" />
+                <label htmlFor="color-input" className="text-xs font-medium cursor-pointer hover:text-white transition-colors">
+                  {color}
+                </label>
+              </div>
             </div>
 
             <div className="flex items-center gap-3 w-40">
@@ -545,9 +569,22 @@ export const DrawingPage: React.FC = () => {
           </button>
 
           {user && (
-            <div className="flex items-center gap-2 text-slate-400 text-sm">
-              <span className="px-2 py-1 rounded bg-slate-800 border border-slate-700">{user.username}</span>
-              <button onClick={logout} className="text-red-300 hover:text-red-200 text-xs" title="Logout">
+            <div className="flex items-center gap-3 text-slate-400 text-sm">
+              <button
+                onClick={() => setIsProfileOpen(true)}
+                className="flex items-center gap-2 hover:bg-slate-700/50 p-1.5 rounded-lg transition-colors group"
+                title="Edit Profile"
+              >
+                {user.profilePictureUrl ? (
+                  <img src={user.profilePictureUrl} alt={user.username} className="w-6 h-6 rounded-full object-cover border border-slate-600 group-hover:border-indigo-500" />
+                ) : (
+                  <div className="w-6 h-6 rounded-full bg-indigo-600/20 border border-indigo-500/50 flex items-center justify-center text-xs text-indigo-300">
+                    {user.username.charAt(0).toUpperCase()}
+                  </div>
+                )}
+                <span className="font-medium text-slate-300 group-hover:text-white">{user.username}</span>
+              </button>
+              <button onClick={logout} className="text-red-400 hover:text-red-300 text-xs px-2 py-1 hover:bg-red-500/10 rounded" title="Logout">
                 Logout
               </button>
             </div>
@@ -640,8 +677,8 @@ export const DrawingPage: React.FC = () => {
                           key={s.id}
                           onClick={() => setSelectedStyleId(s.id)}
                           className={`p-2 rounded-lg border text-left transition-all ${selectedStyleId === s.id
-                              ? "bg-indigo-600/20 border-indigo-500 text-indigo-200"
-                              : "bg-[#1e212b] border-slate-700 text-slate-400 hover:border-slate-500"
+                            ? "bg-indigo-600/20 border-indigo-500 text-indigo-200"
+                            : "bg-[#1e212b] border-slate-700 text-slate-400 hover:border-slate-500"
                             }`}
                           type="button"
                         >
@@ -665,8 +702,8 @@ export const DrawingPage: React.FC = () => {
                           key={s.id}
                           onClick={() => setSelectedOverlayId(s.id)}
                           className={`p-2 rounded-lg border text-left transition-all ${selectedOverlayId === s.id
-                              ? "bg-emerald-600/15 border-emerald-500 text-emerald-200"
-                              : "bg-[#141621] border-slate-700 text-slate-400 hover:border-slate-500"
+                            ? "bg-emerald-600/15 border-emerald-500 text-emerald-200"
+                            : "bg-[#141621] border-slate-700 text-slate-400 hover:border-slate-500"
                             }`}
                           type="button"
                         >
@@ -728,8 +765,8 @@ export const DrawingPage: React.FC = () => {
                         key={s.id}
                         onClick={() => setSelectedRewriteId(s.id)}
                         className={`p-2 rounded-lg border text-left transition-all ${selectedRewriteId === s.id
-                            ? "bg-emerald-600/20 border-emerald-500 text-emerald-200"
-                            : "bg-[#1e212b] border-slate-700 text-slate-400 hover:border-slate-500"
+                          ? "bg-emerald-600/20 border-emerald-500 text-emerald-200"
+                          : "bg-[#1e212b] border-slate-700 text-slate-400 hover:border-slate-500"
                           }`}
                         type="button"
                       >
@@ -742,8 +779,8 @@ export const DrawingPage: React.FC = () => {
                     onClick={handleRewrite}
                     disabled={isRewriting || !prompt.trim()}
                     className={`mt-3 w-full py-2 rounded-lg border border-emerald-500/40 text-white shadow-md shadow-emerald-500/10 ${isRewriting
-                        ? "opacity-60 bg-emerald-600/60"
-                        : "bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500"
+                      ? "opacity-60 bg-emerald-600/60"
+                      : "bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500"
                       }`}
                   >
                     {isRewriting ? "Enhancing..." : "Improve Prompt"}
@@ -772,8 +809,8 @@ export const DrawingPage: React.FC = () => {
                     onClick={handleGenerateOverlay}
                     disabled={isGeneratingOverlay || !prompt.trim()}
                     className={`w-full py-3 rounded-lg border border-emerald-500/40 text-white shadow-md shadow-emerald-500/10 ${isGeneratingOverlay
-                        ? "opacity-60 bg-emerald-600/60"
-                        : "bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500"
+                      ? "opacity-60 bg-emerald-600/60"
+                      : "bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500"
                       }`}
                   >
                     {isGeneratingOverlay ? "Generating overlay..." : "Generate Glow Overlay"}
@@ -841,8 +878,8 @@ export const DrawingPage: React.FC = () => {
                   onClick={handleGenerateCaption}
                   disabled={isCaptioning || (!prompt.trim() && !captionNotes.trim())}
                   className={`w-full py-2 rounded-lg border border-emerald-500/40 text-white shadow-md shadow-emerald-500/10 ${isCaptioning
-                      ? "opacity-60 bg-emerald-600/60"
-                      : "bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500"
+                    ? "opacity-60 bg-emerald-600/60"
+                    : "bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500"
                     }`}
                 >
                   {isCaptioning ? "Generating caption..." : "Generate Title + Description"}
@@ -877,6 +914,7 @@ export const DrawingPage: React.FC = () => {
           </div>
         )}
       </div>
+      <ProfileModal isOpen={isProfileOpen} onClose={() => setIsProfileOpen(false)} />
     </div>
   );
 };

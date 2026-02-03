@@ -52,7 +52,7 @@ public class AuthService : IAuthService
 
         var token = GenerateJwtToken(user);
         
-        return new AuthResponse(token, new UserResponse(user.Id, user.Username, user.Email, user.CreatedAt));
+        return new AuthResponse(token, new UserResponse(user.Id, user.Username, user.Email, user.CreatedAt, user.Age, user.Gender, user.ProfilePictureUrl));
     }
 
     public async Task<AuthResponse> LoginAsync(LoginRequest request, CancellationToken cancellationToken)
@@ -66,7 +66,7 @@ public class AuthService : IAuthService
 
         var token = GenerateJwtToken(user);
         
-        return new AuthResponse(token, new UserResponse(user.Id, user.Username, user.Email, user.CreatedAt));
+        return new AuthResponse(token, new UserResponse(user.Id, user.Username, user.Email, user.CreatedAt, user.Age, user.Gender, user.ProfilePictureUrl));
     }
 
     private string GenerateJwtToken(User user)
@@ -93,5 +93,22 @@ public class AuthService : IAuthService
         var tokenHandler = new JwtSecurityTokenHandler();
         var token = tokenHandler.CreateToken(tokenDescriptor);
         return tokenHandler.WriteToken(token);
+    }
+
+    public async Task<UserResponse> UpdateProfileAsync(Guid userId, UpdateProfileRequest request, CancellationToken cancellationToken)
+    {
+        var user = await _context.Users.FindAsync(new object[] { userId }, cancellationToken);
+        if (user == null)
+        {
+            throw new NotFoundException("User not found.");
+        }
+
+        user.Age = request.Age;
+        user.Gender = request.Gender;
+        user.ProfilePictureUrl = request.ProfilePictureUrl;
+
+        await _context.SaveChangesAsync(cancellationToken);
+
+        return new UserResponse(user.Id, user.Username, user.Email, user.CreatedAt, user.Age, user.Gender, user.ProfilePictureUrl);
     }
 }

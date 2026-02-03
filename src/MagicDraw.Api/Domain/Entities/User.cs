@@ -11,6 +11,10 @@ public class User
     public string PasswordHash { get; set; } = string.Empty;
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
+    public int? Age { get; set; }
+    public string? Gender { get; set; }
+    public string? ProfilePictureUrl { get; set; }
+
     public ICollection<Drawing> Drawings { get; set; } = new List<Drawing>();
     public ICollection<AiGeneration> AiGenerations { get; set; } = new List<AiGeneration>();
 }
