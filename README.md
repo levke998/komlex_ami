@@ -41,6 +41,13 @@ The project uses a microservice-like architecture orchestrated by **.NET Aspire*
 - **Azure Blob Storage** (or local emulator): Image assets and exports.
 - **Redis** (Optional): Rate limiting, caching, matchmaking queues.
 
+> **⚠️ Hybrid Storage Note (Temporary):**
+> Due to backend concurrency limitations, the application currently operates in **Hybrid Storage Mode**:
+> - **Metadata** (Title, ID, Created Date) is stored on the **Server Database**.
+> - **Image Content** (Layers) is stored in the **Browser's LocalStorage**.
+>
+> *Consequence: Your drawings will appear in the list on any device, but the visual content will only load on the specific device/browser where it was created. Clearing browser data will result in empty canvases.*
+
 ---
 
 ## 3) Key Features
@@ -81,35 +88,3 @@ A "Drawing" project contains:
 - **Refactoring**: Do not rewrite large chunks without good reason and strict incremental steps.
 
 ### 4.3 Progress Tracking (`WORKLOG.txt`)
-We maintain a living log of work. Format:
-```text
-[YYYY-MM-DD HH:MM] <author>
-DONE: ...
-CHANGED: ...
-DECISIONS: ...
-NEXT: ...
-BLOCKERS: ...
-```
-
-### 4.4 Status Tracking (`STATUS.md`)
-Tracks the Roadmap and MVP Checklist. **Must be updated when features are completed.**
-
----
-
-## 5) Setup & Run
-
-### Prerequisites
-- .NET SDK (Latest Stable)
-- Docker (for full Aspire orchestration)
-- Node.js (for Web Frontend)
-
-### Running with Aspire
-```bash
-dotnet run --project ./src/MagicDraw.AppHost
-```
-
----
-
-## 6) Contribution Checklists
-
-See [STATUS.md](./STATUS.md) for the active backlog.

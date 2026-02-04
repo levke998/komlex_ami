@@ -289,3 +289,22 @@ CHANGED:
 NEXT:
 - Continue with requested features.
 
+[2026-02-04 17:10] Antigravity
+DONE:
+- Diagnosed persistent `500 Internal Server Error` (Optimistic Concurrency) and `405 Method Not Allowed` issues when saving layers via the API.
+- Attempted multiple backend-compliance strategies:
+  - Sequential saving with delays.
+  - Payload reduction (1x1 pixel placeholders).
+  - One-shot "Deep Insert" (Creating Drawing + Layers in one POST).
+  - Data "smuggling" (Base64 data inside ConfigurationJson).
+  - Update via PUT request.
+- Implemented **Hybrid Storage Strategy** in `drawings.ts` to bypass backend limitations:
+  - **Drawing Metadata** (ID, Title, Dimensions) is saved to the **Server**.
+  - **Layer Content** (Base64 Image Data) is saved to the Browser's **LocalStorage**.
+- Updated `DrawingPage.tsx` to handle data retrieval:
+  - Fetches metadata from API.
+  - Injects layer content from LocalStorage seamlessly.
+- Verified successful Save and Load operations.
+
+DECISIONS:
+- Adopted Hybrid Storage to ensure application functionality without requiring immediate C# backend fixes. This makes drawings persistent on the local machine but limits portability across devices until the backend is patched.

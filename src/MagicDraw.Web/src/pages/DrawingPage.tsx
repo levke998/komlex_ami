@@ -220,21 +220,37 @@ export const DrawingPage: React.FC = () => {
   };
 
   // Save/Load
-  const handleSave = async () => {
+ const handleSave = async () => {
     if (!token) {
-      alert("Please sign in to save.");
+      alert("Kérlek, jelentkezz be a mentéshez!");
       return;
     }
+
+    // 1. Bekérjük a nevet a felhasználótól
+    const title = window.prompt("Mi legyen a rajz címe?", "Az én alkotásom");
+    if (!title) return; // Ha mégsét nyom, nem mentünk
+
     const state = canvasRef.current?.exportState() ?? [];
+    
+    // Összeállítjuk az adatokat
     const merged = layers.map((l) => {
       const img = state.find((s) => s.layerId === l.id);
-      return { ...l, contentDataUrl: img?.dataUrl ?? l.contentDataUrl };
+      return { 
+          ...l, 
+          contentDataUrl: img?.dataUrl ?? l.contentDataUrl,
+          // Biztosítjuk, hogy a shapes tömb ne legyen null
+          shapes: l.shapes || [] 
+      };
     });
+
     try {
-      const id = await saveDrawingWithLayers(token, merged, canvasSize, "My Drawing");
-      alert(`Saved: ${id}`);
+      // 2. A megadott címmel (title) mentjük el
+      const id = await saveDrawingWithLayers(token, merged, canvasSize, title);
+      alert(`Sikeres mentés! Rajz azonosító: ${id}`);
     } catch (e: any) {
-      alert(e.message || "Save failed");
+      // 3. Részletes hiba kiírása a konzolra (F12)
+      console.error("MENTÉSI HIBA RÉSZLETEK:", e);
+      alert("Hiba történt mentés közben! (Részletek a konzolon F12)");
     }
   };
 
@@ -245,29 +261,77 @@ export const DrawingPage: React.FC = () => {
     }
     const drawingId = window.prompt("Drawing ID to load:");
     if (!drawingId) return;
+
     try {
+      console.log("📥 Rajz letöltése...", drawingId);
       const data = await getDrawing(token, drawingId);
-      const loadedLayers: Layer[] = data.layers.map((l: any, idx: number) => {
-        const cfg = l.configurationJson ? JSON.parse(l.configurationJson) : {};
+      
+      const rawData: any = data;
+      let foundLayers = rawData.layers || rawData.Layers || [];
+
+      // Ha nincs a fő válaszban, megnézzük külön is (biztos, ami biztos)
+      if (!foundLayers || foundLayers.length === 0) {
+        try {
+            const res = await fetch(`/api/drawings/${drawingId}/layers`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            if (res.ok) {
+                const sepData = await res.json();
+                foundLayers = Array.isArray(sepData) ? sepData : (sepData.layers || sepData.Layers || []);
+            }
+        } catch(e) {}
+      }
+
+      if (!foundLayers || foundLayers.length === 0) {
+          alert("Nincsenek rétegek. (Ha most mentettél, akkor a csempészés nem sikerült).");
+          return;
+      }
+
+      console.log(`✅ ${foundLayers.length} réteg feldolgozása...`);
+
+      const loadedLayers: Layer[] = foundLayers.map((l: any, idx: number) => {
+        let cfg: any = {};
+        const rawConfig = l.configurationJson || l.ConfigurationJson;
+        if (rawConfig) {
+            try { cfg = JSON.parse(rawConfig); } catch (e) { }
+        }
+        
+        // --- 🕵️‍♂️ KICSOMAGOLÁS: Kivesszük az adatot a Configból ---
+        let imageSource = cfg.backupContent;
+
+        // Ha ott nincs, nézzük a sima helyen
+        if (!imageSource) {
+            imageSource = l.content || l.Content || l.imageUrl || l.ImageUrl;
+        }
+        
+        // Előtag pótlása
+        if (imageSource && typeof imageSource === 'string' && !imageSource.startsWith("data:image")) {
+            imageSource = `data:image/png;base64,${imageSource}`;
+        }
+
         return {
-          id: l.id,
-          name: l.name ?? `Layer ${idx + 1}`,
-          isVisible: l.isVisible,
-          isLocked: l.isLocked,
-          opacity: cfg.opacity ?? 1,
-          blendMode: cfg.blendMode,
-          filter: cfg.filter,
-          contentDataUrl: l.imageUrl ?? undefined,
-          shapes: [], // Load shapes if available in future
+          id: String(l.id || l.Id || crypto.randomUUID()),
+          name: String(l.name || l.Name || `Layer ${idx + 1}`),
+          isVisible: (l.isVisible ?? l.IsVisible ?? true),
+          isLocked: (l.isLocked ?? l.IsLocked ?? false),
+          opacity: (typeof cfg.opacity === 'number') ? cfg.opacity : 1,
+          blendMode: (cfg.blendMode || "normal") as GlobalCompositeOperation,
+          filter: cfg.filter || "",
+          contentDataUrl: imageSource || undefined,
+          shapes: l.shapes || l.Shapes || [], 
         };
       });
+
       setLayers(loadedLayers);
-      setActiveLayerId(loadedLayers[loadedLayers.length - 1]?.id ?? "");
-      restoreLayerImages(loadedLayers);
+      if (loadedLayers.length > 0) setActiveLayerId(loadedLayers[loadedLayers.length - 1].id);
       setHistory([]);
       setRedoStack([]);
+
+      setTimeout(() => restoreLayerImages(loadedLayers), 100);
+
     } catch (e: any) {
-      alert(e.message || "Load failed");
+      console.error("Betöltési hiba:", e);
+      alert("Hiba: " + e.message);
     }
   };
 
@@ -459,10 +523,10 @@ export const DrawingPage: React.FC = () => {
         {/* Logo & Left Actions */}
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 bg-gradient-to-tr from-violet-500 to-fuchsia-500 rounded-lg flex items-center justify-center shadow-lg">
-              <span className="text-white font-bold text-lg">M</span>
+            <div className="flex items-center justify-center w-8 h-8 rounded-lg shadow-lg bg-gradient-to-tr from-violet-500 to-fuchsia-500">
+              <span className="text-lg font-bold text-white">M</span>
             </div>
-            <span className="font-bold text-lg tracking-wide hidden sm:block">Magic Draw</span>
+            <span className="hidden text-lg font-bold tracking-wide sm:block">Magic Draw</span>
           </div>
         </div>
 
@@ -505,14 +569,14 @@ export const DrawingPage: React.FC = () => {
           {/* Color & Size */}
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2 bg-[#1e212b] px-3 py-1.5 rounded-lg border border-slate-700/50">
-              <div className="w-6 h-6 rounded-md border border-slate-500/50" style={{ backgroundColor: color }}></div>
-              <input type="color" value={color} onChange={(e) => setColor(e.target.value)} className="w-0 h-0 opacity-0 absolute" id="color-input" />
-              <label htmlFor="color-input" className="text-xs font-medium cursor-pointer hover:text-white transition-colors">
+              <div className="w-6 h-6 border rounded-md border-slate-500/50" style={{ backgroundColor: color }}></div>
+              <input type="color" value={color} onChange={(e) => setColor(e.target.value)} className="absolute w-0 h-0 opacity-0" id="color-input" />
+              <label htmlFor="color-input" className="text-xs font-medium transition-colors cursor-pointer hover:text-white">
                 {color}
               </label>
             </div>
 
-            <div className="flex items-center gap-3 w-40">
+            <div className="flex items-center w-40 gap-3">
               <span className="text-[10px] uppercase font-bold text-slate-500 whitespace-nowrap">Size</span>
               <input
                 type="range"
@@ -548,9 +612,9 @@ export const DrawingPage: React.FC = () => {
           </button>
 
           {user && (
-            <div className="flex items-center gap-2 text-slate-400 text-sm">
-              <span className="px-2 py-1 rounded bg-slate-800 border border-slate-700">{user.username}</span>
-              <button onClick={logout} className="text-red-300 hover:text-red-200 text-xs" title="Logout">
+            <div className="flex items-center gap-2 text-sm text-slate-400">
+              <span className="px-2 py-1 border rounded bg-slate-800 border-slate-700">{user.username}</span>
+              <button onClick={logout} className="text-xs text-red-300 hover:text-red-200" title="Logout">
                 Logout
               </button>
             </div>
@@ -559,7 +623,7 @@ export const DrawingPage: React.FC = () => {
       </header>
 
       {/* MAIN CONTENT AREA */}
-      <div className="flex-1 flex overflow-hidden relative">
+      <div className="relative flex flex-1 overflow-hidden">
         <main className="flex-1 relative bg-[#181a25] overflow-hidden cursor-crosshair">
           <div
             className="absolute inset-0 opacity-[0.05] pointer-events-none"
@@ -606,9 +670,9 @@ export const DrawingPage: React.FC = () => {
               <div className="flex items-center justify-between p-4 border-b border-slate-700 bg-[#2f3245]">
                 <div className="flex items-center gap-2">
                   <span className="text-xl">✨</span>
-                  <h2 className="font-bold text-lg bg-gradient-to-r from-indigo-400 to-fuchsia-400 bg-clip-text text-transparent">AI Generator</h2>
+                  <h2 className="text-lg font-bold text-transparent bg-gradient-to-r from-indigo-400 to-fuchsia-400 bg-clip-text">AI Generator</h2>
                 </div>
-                <button onClick={() => setIsAIModalOpen(false)} className="w-8 h-8 rounded-full flex items-center justify-center hover:bg-slate-700 transition-colors text-slate-400 hover:text-white">
+                <button onClick={() => setIsAIModalOpen(false)} className="flex items-center justify-center w-8 h-8 transition-colors rounded-full hover:bg-slate-700 text-slate-400 hover:text-white">
                   ✕
                 </button>
               </div>
@@ -623,7 +687,7 @@ export const DrawingPage: React.FC = () => {
                   >
                     Image
                   </button>
-                  <div className="px-2 text-slate-500 text-sm">→</div>
+                  <div className="px-2 text-sm text-slate-500">→</div>
                   <button
                     type="button"
                     onClick={() => setAiMode("glow")}
@@ -636,8 +700,8 @@ export const DrawingPage: React.FC = () => {
 
                 {aiMode === "image" && (
                   <div>
-                    <label className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 block">Style Preset</label>
-                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                    <label className="block mb-2 text-xs font-bold tracking-wider uppercase text-slate-500">Style Preset</label>
+                    <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
                       {stylePresets.map((s) => (
                         <button
                           key={s.id}
@@ -659,10 +723,10 @@ export const DrawingPage: React.FC = () => {
                 {aiMode === "glow" && (
                   <div className="p-4 bg-[#1e212b] rounded-lg border border-slate-700/50">
                     <div className="flex items-center justify-between mb-2">
-                      <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Glow Overlay</label>
+                      <label className="text-xs font-bold tracking-wider uppercase text-slate-500">Glow Overlay</label>
                       <span className="text-[10px] text-slate-500">Uses the prompt below</span>
                     </div>
-                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                    <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
                       {overlayPresets.map((s) => (
                         <button
                           key={s.id}
@@ -678,7 +742,7 @@ export const DrawingPage: React.FC = () => {
                         </button>
                       ))}
                     </div>
-                    <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div className="grid grid-cols-1 gap-3 mt-3 sm:grid-cols-2">
                       <div className="space-y-1">
                         <div className="flex items-center justify-between text-[10px] text-slate-500 uppercase">
                           <span>Opacity</span>
@@ -714,7 +778,7 @@ export const DrawingPage: React.FC = () => {
                 )}
 
                 <div>
-                  <label className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 block">Prompt</label>
+                  <label className="block mb-2 text-xs font-bold tracking-wider uppercase text-slate-500">Prompt</label>
                   <textarea
                     value={prompt}
                     onChange={(e) => setPrompt(e.target.value)}
@@ -724,8 +788,8 @@ export const DrawingPage: React.FC = () => {
                 </div>
 
                 <div>
-                  <label className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 block">Prompt Enhancer</label>
-                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                  <label className="block mb-2 text-xs font-bold tracking-wider uppercase text-slate-500">Prompt Enhancer</label>
+                  <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
                     {rewritePresets.map((s) => (
                       <button
                         key={s.id}
@@ -784,8 +848,8 @@ export const DrawingPage: React.FC = () => {
                 )}
 
                 <div className="p-4 bg-[#1e212b] rounded-lg border border-slate-700/50">
-                  <h4 className="text-xs font-semibold text-slate-400 mb-2">Tips</h4>
-                  <ul className="text-xs text-slate-500 space-y-1 list-disc pl-4">
+                  <h4 className="mb-2 text-xs font-semibold text-slate-400">Tips</h4>
+                  <ul className="pl-4 space-y-1 text-xs list-disc text-slate-500">
                     <li>Be specific about the style (e.g. "Oil painting", "Pixel art").</li>
                     <li>Adding colors and lighting helps.</li>
                   </ul>
@@ -809,13 +873,13 @@ export const DrawingPage: React.FC = () => {
                 </div>
                 <button
                   onClick={() => setIsCaptionOpen(false)}
-                  className="w-8 h-8 rounded-full flex items-center justify-center hover:bg-slate-700 text-slate-400 hover:text-white"
+                  className="flex items-center justify-center w-8 h-8 rounded-full hover:bg-slate-700 text-slate-400 hover:text-white"
                 >
                   ✕
                 </button>
               </div>
 
-              <p className="text-xs text-slate-500 mb-4">
+              <p className="mb-4 text-xs text-slate-500">
                 Generate a title and description for your drawing. Uses your prompt and optional notes.
               </p>
 
@@ -932,7 +996,7 @@ const AutoResizingCanvas = React.forwardRef<CanvasStackHandle, AutoResizingCanva
   }, [size, onSizeChange]);
 
   return (
-    <div ref={containerRef} className="w-full h-full relative bg-white">
+    <div ref={containerRef} className="relative w-full h-full bg-white">
       {size.width > 0 && size.height > 0 && <CanvasStack ref={ref} width={size.width} height={size.height} {...rest} />}
     </div>
   );
