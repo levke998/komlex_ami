@@ -13,6 +13,7 @@ public class AppDbContext : DbContext
     public DbSet<Drawing> Drawings { get; set; }
     public DbSet<Layer> Layers { get; set; }
     public DbSet<AiGeneration> AiGenerations { get; set; }
+    public DbSet<DrawingLike> DrawingLikes { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -49,5 +50,22 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<Layer>()
             .Property(l => l.Type)
             .HasConversion<string>();
+
+        // --- LIKE RENDSZER KONFIGURÁCIÓ ---
+
+        modelBuilder.Entity<DrawingLike>()
+        .HasKey(dl => new { dl.DrawingId, dl.UserId }); // Egyedi kulcs
+
+        modelBuilder.Entity<DrawingLike>()
+            .HasOne(dl => dl.Drawing)
+            .WithMany(d => d.Likes)
+            .HasForeignKey(dl => dl.DrawingId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<DrawingLike>()
+            .HasOne(dl => dl.User)
+            .WithMany(u => u.Likes)
+            .HasForeignKey(dl => dl.UserId)
+            .OnDelete(DeleteBehavior.Restrict);
     }
 }

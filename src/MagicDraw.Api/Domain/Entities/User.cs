@@ -13,4 +13,5 @@ public class User
 
     public ICollection<Drawing> Drawings { get; set; } = new List<Drawing>();
     public ICollection<AiGeneration> AiGenerations { get; set; } = new List<AiGeneration>();
+    public ICollection<DrawingLike> Likes { get; set; } = new List<DrawingLike>();
 }

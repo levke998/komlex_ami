@@ -11,11 +11,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace MagicDraw.Api.Application.Services;
 
-    public class DrawingService : IDrawingService
-    {
-        private readonly AppDbContext _db;
+public class DrawingService : IDrawingService
+{
+    private readonly AppDbContext _db;
 
-        public DrawingService(AppDbContext db)
+    public DrawingService(AppDbContext db)
     {
         _db = db;
     }
@@ -37,7 +37,8 @@ namespace MagicDraw.Api.Application.Services;
         _db.Drawings.Add(drawing);
         await _db.SaveChangesAsync(ct);
 
-        return MapToResponse(drawing);
+        // Friss rajzon még nincs like
+        return MapToResponse(drawing, 0, false);
     }
 
     public async Task<DrawingResponse?> GetByIdAsync(Guid id, Guid userId, CancellationToken ct)
@@ -46,9 +47,15 @@ namespace MagicDraw.Api.Application.Services;
             .AsNoTracking()
             .Where(d => d.UserId == userId)
             .Include(d => d.Layers)
+            .Include(d => d.Likes) // Betöltjük a like-okat is!
             .FirstOrDefaultAsync(d => d.Id == id, ct);
 
-        return drawing == null ? null : MapToResponse(drawing);
+        if (drawing == null) return null;
+
+        var likeCount = drawing.Likes.Count;
+        var isLikedByMe = drawing.Likes.Any(l => l.UserId == userId);
+
+        return MapToResponse(drawing, likeCount, isLikedByMe);
     }
 
     public async Task<IReadOnlyList<DrawingListItemResponse>> GetAllAsync(Guid userId, CancellationToken ct)
@@ -56,6 +63,7 @@ namespace MagicDraw.Api.Application.Services;
         return await _db.Drawings
             .AsNoTracking()
             .Where(d => d.UserId == userId)
+            .Include(d => d.Likes) // Itt is kellenek a like-ok
             .OrderByDescending(d => d.CreatedAt)
             .Select(d => new DrawingListItemResponse(
                 d.Id,
@@ -64,6 +72,8 @@ namespace MagicDraw.Api.Application.Services;
                 d.Width,
                 d.Height,
                 d.IsPublic,
+                d.Likes.Count, // LikeCount
+                d.Likes.Any(l => l.UserId == userId), // IsLikedByMe
                 d.CreatedAt,
                 d.UpdatedAt
             ))
@@ -86,13 +96,41 @@ namespace MagicDraw.Api.Application.Services;
         await _db.SaveChangesAsync(ct);
     }
 
-    // Layer Operations
+    // --- ÚJ: LIKE FUNKCIÓ ---
+    public async Task<bool> ToggleLikeAsync(Guid userId, Guid drawingId)
+    {
+        // Megnézzük, létezik-e már a like
+        var existingLike = await _db.DrawingLikes
+            .FirstOrDefaultAsync(dl => dl.UserId == userId && dl.DrawingId == drawingId);
+
+        if (existingLike != null)
+        {
+            // Ha van, töröljük (Dislike)
+            _db.DrawingLikes.Remove(existingLike);
+            await _db.SaveChangesAsync();
+            return false; // Már NINCS like-olva
+        }
+
+        // Ha nincs, létrehozzuk (Like)
+        var newLike = new DrawingLike
+        {
+            UserId = userId,
+            DrawingId = drawingId,
+            LikedAt = DateTime.UtcNow
+        };
+
+        _db.DrawingLikes.Add(newLike);
+        await _db.SaveChangesAsync();
+        return true; // MOST lett like-olva
+    }
+
+    // Layer Operations (Változatlan)
 
     public async Task<LayerResponse?> AddLayerAsync(Guid drawingId, Guid userId, CreateLayerRequest request, CancellationToken ct)
     {
         var drawing = await _db.Drawings.Include(d => d.Layers)
             .FirstOrDefaultAsync(d => d.Id == drawingId && d.UserId == userId, ct);
-        if (drawing == null) return null; // either missing or unauthorized
+        if (drawing == null) return null;
 
         var layer = new Layer
         {
@@ -108,8 +146,8 @@ namespace MagicDraw.Api.Application.Services;
         };
 
         drawing.Layers.Add(layer);
-        drawing.UpdatedAt = DateTime.UtcNow; // Touch parent
-        
+        drawing.UpdatedAt = DateTime.UtcNow;
+
         await _db.SaveChangesAsync(ct);
 
         return MapToLayerResponse(layer);
@@ -131,7 +169,7 @@ namespace MagicDraw.Api.Application.Services;
         if (request.ImageUrl != null) layer.ImageUrl = request.ImageUrl;
         if (request.ConfigurationJson != null) layer.ConfigurationJson = request.ConfigurationJson;
 
-        drawing.UpdatedAt = DateTime.UtcNow; // Touch parent
+        drawing.UpdatedAt = DateTime.UtcNow;
         await _db.SaveChangesAsync(ct);
 
         return MapToLayerResponse(layer);
@@ -147,15 +185,15 @@ namespace MagicDraw.Api.Application.Services;
         if (layer == null) return false;
 
         drawing.Layers.Remove(layer);
-        drawing.UpdatedAt = DateTime.UtcNow; // Touch parent
+        drawing.UpdatedAt = DateTime.UtcNow;
         await _db.SaveChangesAsync(ct);
 
         return true;
     }
 
-    // Hélpers
+    // Helpers
 
-    private static DrawingResponse MapToResponse(Drawing drawing)
+    private static DrawingResponse MapToResponse(Drawing drawing, int likeCount, bool isLikedByMe)
     {
         return new DrawingResponse(
             drawing.Id,
@@ -164,6 +202,8 @@ namespace MagicDraw.Api.Application.Services;
             drawing.Width,
             drawing.Height,
             drawing.IsPublic,
+            likeCount,      // ÚJ
+            isLikedByMe,    // ÚJ
             drawing.CreatedAt,
             drawing.UpdatedAt,
             drawing.Layers.Select(MapToLayerResponse).OrderBy(l => l.OrderIndex).ToList()

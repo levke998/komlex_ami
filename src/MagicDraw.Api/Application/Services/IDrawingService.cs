@@ -12,6 +12,7 @@ public interface IDrawingService
     Task<DrawingResponse?> GetByIdAsync(Guid id, Guid userId, CancellationToken ct);
     Task<IReadOnlyList<DrawingListItemResponse>> GetAllAsync(Guid userId, CancellationToken ct);
     Task DeleteAsync(Guid id, Guid userId, CancellationToken ct);
+    Task<bool> ToggleLikeAsync(Guid userId, Guid drawingId);
 
     // Layer operations (Nested)
     Task<LayerResponse?> AddLayerAsync(Guid drawingId, Guid userId, CreateLayerRequest request, CancellationToken ct);

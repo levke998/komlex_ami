@@ -11,7 +11,11 @@ if (builder.Environment.IsEnvironment("Testing"))
 }
 else
 {
-    builder.AddSqlServerDbContext<AppDbContext>("sqldata");
+    // Itt a biztosíték: közvetlenül megadjuk neki a címet!
+    var connectionString = "Server=(localdb)\\MagicSQL;Database=magicdraw;Trusted_Connection=True;MultipleActiveResultSets=true";
+    
+    builder.Services.AddDbContext<AppDbContext>(options => 
+        options.UseSqlServer(connectionString));
 }
 builder.AddServiceDefaults();
 builder.Services.AddControllers(); // Enable Controllers

@@ -16,4 +16,6 @@ public class Drawing
 
     public User? User { get; set; }
     public ICollection<Layer> Layers { get; set; } = new List<Layer>();
+
+    public ICollection<DrawingLike> Likes { get; set; } = new List<DrawingLike>();
 }
