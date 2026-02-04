@@ -271,3 +271,21 @@ DONE:
 NEXT:
 - Hook drawing save/load to secured API and remove unused old migration file if desired.
 
+[2026-02-03 18:05] Antigravity
+DONE:
+- Investigated and fixed startup issues:
+  - Installed missing Node.js on host.
+  - Fixed SSL certificate trust issues (dotnet dev-certs https --trust).
+  - Created missing appsettings.json in MagicDraw.Api with required JwtSettings.
+- Implemented "Triangle" tool in Frontend:
+  - Added 'triangle' to ToolType.
+  - Added Triangle button to Toolbar.
+  - Implemented drawing logic (preview and commit) in CanvasStack.
+
+CHANGED:
+- Updated CanvasStack.tsx to handle triangle geometry (isosceles based on bounding box).
+- Updated DrawingPage.tsx to include the new tool button.
+
+NEXT:
+- Continue with requested features.
+

@@ -472,6 +472,7 @@ export const DrawingPage: React.FC = () => {
           <div className="w-[1px] h-6 bg-slate-700 mx-1"></div>
           <ToolButton active={selectedTool === "rectangle"} onClick={() => setSelectedTool("rectangle")} icon="⬜" title="Rectangle" />
           <ToolButton active={selectedTool === "circle"} onClick={() => setSelectedTool("circle")} icon="⭕" title="Circle" />
+          <ToolButton active={selectedTool === "triangle"} onClick={() => setSelectedTool("triangle")} icon="🔺" title="Triangle" />
           <div className="w-[1px] h-6 bg-slate-700 mx-1"></div>
           <button
             onClick={() => setIsAIModalOpen(true)}
@@ -523,9 +524,8 @@ export const DrawingPage: React.FC = () => {
 
           <button
             onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-            className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-2 transition-all ${
-              isSidebarOpen ? "bg-indigo-600 text-white shadow-lg shadow-indigo-500/20" : "bg-[#1e212b] text-slate-400 hover:text-white border border-slate-700"
-            }`}
+            className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-2 transition-all ${isSidebarOpen ? "bg-indigo-600 text-white shadow-lg shadow-indigo-500/20" : "bg-[#1e212b] text-slate-400 hover:text-white border border-slate-700"
+              }`}
             title="Toggle Layers"
           >
             <span>📑</span> Layers
@@ -615,9 +615,8 @@ export const DrawingPage: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => setAiMode("image")}
-                    className={`flex-1 px-3 py-2 rounded-lg text-xs font-semibold transition-all ${
-                      aiMode === "image" ? "bg-indigo-600 text-white shadow-md" : "text-slate-400 hover:text-white"
-                    }`}
+                    className={`flex-1 px-3 py-2 rounded-lg text-xs font-semibold transition-all ${aiMode === "image" ? "bg-indigo-600 text-white shadow-md" : "text-slate-400 hover:text-white"
+                      }`}
                   >
                     Image
                   </button>
@@ -625,9 +624,8 @@ export const DrawingPage: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => setAiMode("glow")}
-                    className={`flex-1 px-3 py-2 rounded-lg text-xs font-semibold transition-all ${
-                      aiMode === "glow" ? "bg-emerald-600 text-white shadow-md" : "text-slate-400 hover:text-white"
-                    }`}
+                    className={`flex-1 px-3 py-2 rounded-lg text-xs font-semibold transition-all ${aiMode === "glow" ? "bg-emerald-600 text-white shadow-md" : "text-slate-400 hover:text-white"
+                      }`}
                   >
                     Glow Overlay
                   </button>
@@ -641,11 +639,10 @@ export const DrawingPage: React.FC = () => {
                         <button
                           key={s.id}
                           onClick={() => setSelectedStyleId(s.id)}
-                          className={`p-2 rounded-lg border text-left transition-all ${
-                            selectedStyleId === s.id
+                          className={`p-2 rounded-lg border text-left transition-all ${selectedStyleId === s.id
                               ? "bg-indigo-600/20 border-indigo-500 text-indigo-200"
                               : "bg-[#1e212b] border-slate-700 text-slate-400 hover:border-slate-500"
-                          }`}
+                            }`}
                           type="button"
                         >
                           <div className="text-xs font-semibold">{s.label}</div>
@@ -667,11 +664,10 @@ export const DrawingPage: React.FC = () => {
                         <button
                           key={s.id}
                           onClick={() => setSelectedOverlayId(s.id)}
-                          className={`p-2 rounded-lg border text-left transition-all ${
-                            selectedOverlayId === s.id
+                          className={`p-2 rounded-lg border text-left transition-all ${selectedOverlayId === s.id
                               ? "bg-emerald-600/15 border-emerald-500 text-emerald-200"
                               : "bg-[#141621] border-slate-700 text-slate-400 hover:border-slate-500"
-                          }`}
+                            }`}
                           type="button"
                         >
                           <div className="text-xs font-semibold">{s.label}</div>
@@ -731,11 +727,10 @@ export const DrawingPage: React.FC = () => {
                       <button
                         key={s.id}
                         onClick={() => setSelectedRewriteId(s.id)}
-                        className={`p-2 rounded-lg border text-left transition-all ${
-                          selectedRewriteId === s.id
+                        className={`p-2 rounded-lg border text-left transition-all ${selectedRewriteId === s.id
                             ? "bg-emerald-600/20 border-emerald-500 text-emerald-200"
                             : "bg-[#1e212b] border-slate-700 text-slate-400 hover:border-slate-500"
-                        }`}
+                          }`}
                         type="button"
                       >
                         <div className="text-xs font-semibold">{s.label}</div>
@@ -746,11 +741,10 @@ export const DrawingPage: React.FC = () => {
                   <button
                     onClick={handleRewrite}
                     disabled={isRewriting || !prompt.trim()}
-                    className={`mt-3 w-full py-2 rounded-lg border border-emerald-500/40 text-white shadow-md shadow-emerald-500/10 ${
-                      isRewriting
+                    className={`mt-3 w-full py-2 rounded-lg border border-emerald-500/40 text-white shadow-md shadow-emerald-500/10 ${isRewriting
                         ? "opacity-60 bg-emerald-600/60"
                         : "bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500"
-                    }`}
+                      }`}
                   >
                     {isRewriting ? "Enhancing..." : "Improve Prompt"}
                   </button>
@@ -760,9 +754,8 @@ export const DrawingPage: React.FC = () => {
                   <button
                     onClick={handleGenerateImage}
                     disabled={isGenerating}
-                    className={`w-full py-3 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-bold rounded-lg shadow-lg flex items-center justify-center gap-2 transform transition-all ${
-                      isGenerating ? "opacity-50 cursor-not-allowed" : "hover:scale-[1.02]"
-                    }`}
+                    className={`w-full py-3 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-bold rounded-lg shadow-lg flex items-center justify-center gap-2 transform transition-all ${isGenerating ? "opacity-50 cursor-not-allowed" : "hover:scale-[1.02]"
+                      }`}
                   >
                     {isGenerating ? (
                       <>
@@ -778,11 +771,10 @@ export const DrawingPage: React.FC = () => {
                   <button
                     onClick={handleGenerateOverlay}
                     disabled={isGeneratingOverlay || !prompt.trim()}
-                    className={`w-full py-3 rounded-lg border border-emerald-500/40 text-white shadow-md shadow-emerald-500/10 ${
-                      isGeneratingOverlay
+                    className={`w-full py-3 rounded-lg border border-emerald-500/40 text-white shadow-md shadow-emerald-500/10 ${isGeneratingOverlay
                         ? "opacity-60 bg-emerald-600/60"
                         : "bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500"
-                    }`}
+                      }`}
                   >
                     {isGeneratingOverlay ? "Generating overlay..." : "Generate Glow Overlay"}
                   </button>
@@ -848,11 +840,10 @@ export const DrawingPage: React.FC = () => {
                 <button
                   onClick={handleGenerateCaption}
                   disabled={isCaptioning || (!prompt.trim() && !captionNotes.trim())}
-                  className={`w-full py-2 rounded-lg border border-emerald-500/40 text-white shadow-md shadow-emerald-500/10 ${
-                    isCaptioning
+                  className={`w-full py-2 rounded-lg border border-emerald-500/40 text-white shadow-md shadow-emerald-500/10 ${isCaptioning
                       ? "opacity-60 bg-emerald-600/60"
                       : "bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500"
-                  }`}
+                    }`}
                 >
                   {isCaptioning ? "Generating caption..." : "Generate Title + Description"}
                 </button>
@@ -894,9 +885,8 @@ const ToolButton: React.FC<{ active: boolean; onClick: () => void; icon: string;
   <button
     onClick={onClick}
     title={title}
-    className={`w-10 h-10 rounded-lg flex items-center justify-center text-lg transition-all ${
-      active ? "bg-indigo-600 text-white shadow-lg scale-105" : "text-slate-400 hover:bg-slate-700 hover:text-slate-200"
-    }`}
+    className={`w-10 h-10 rounded-lg flex items-center justify-center text-lg transition-all ${active ? "bg-indigo-600 text-white shadow-lg scale-105" : "text-slate-400 hover:bg-slate-700 hover:text-slate-200"
+      }`}
   >
     {icon}
   </button>
@@ -917,16 +907,16 @@ const AutoResizingCanvas = React.forwardRef<CanvasStackHandle, AutoResizingCanva
     const updateSize = () => {
       if (!containerRef.current) return;
       const { clientWidth, clientHeight } = containerRef.current;
-          setSize((prev) => {
-            if (Math.abs(clientWidth - prev.width) > 2 || Math.abs(clientHeight - prev.height) > 2) {
-              if (ref && "current" in ref && ref.current) {
-                ref.current.snapshot();
-              }
-              return { width: clientWidth, height: clientHeight };
-            }
-            return prev;
-          });
-        };
+      setSize((prev) => {
+        if (Math.abs(clientWidth - prev.width) > 2 || Math.abs(clientHeight - prev.height) > 2) {
+          if (ref && "current" in ref && ref.current) {
+            ref.current.snapshot();
+          }
+          return { width: clientWidth, height: clientHeight };
+        }
+        return prev;
+      });
+    };
 
     updateSize();
     const observer = new ResizeObserver(updateSize);
