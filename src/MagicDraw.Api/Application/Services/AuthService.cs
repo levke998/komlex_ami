@@ -5,7 +5,7 @@ using BCrypt.Net;
 using MagicDraw.Api.Application.Dtos;
 using MagicDraw.Api.Domain.Entities;
 using MagicDraw.Api.Domain.Exceptions;
-using MagicDraw.Api.Domain.Exceptions;
+
 using MagicDraw.Api.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;

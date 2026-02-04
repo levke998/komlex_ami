@@ -64,6 +64,17 @@ DONE:
 - Implemented "Soft Brush" physics.
 - Refactored AI Modal to be interactive.
 
+[2026-01-06 14:15] Antigravity
+DONE:
+- Debugged and Fixed Backend Startup Crash (Missing CORS service).
+- Fixed AI 404 Error (Configured Proxy and CORS).
+- Fixed Frontend Build Error (TS Syntax).
+- Fixed Backend Build Error (C# record placement).
+- Fixed Layer Sidebar Resize Bug (Implemented Canvas Snapshot/Restore).
+- Fixed Layer Opacity Slider Bug (Stop Propagation).
+- Verified Application Stability.
+- Committed and Pushed to `origin/main`.
+
 NEXT:
 - Deploy? (Manual)
 [2026-01-16 13:55] Antigravity
@@ -259,3 +270,22 @@ DONE:
 
 NEXT:
 - Hook drawing save/load to secured API and remove unused old migration file if desired.
+
+[2026-02-03 18:05] Antigravity
+DONE:
+- Investigated and fixed startup issues:
+  - Installed missing Node.js on host.
+  - Fixed SSL certificate trust issues (dotnet dev-certs https --trust).
+  - Created missing appsettings.json in MagicDraw.Api with required JwtSettings.
+- Implemented "Triangle" tool in Frontend:
+  - Added 'triangle' to ToolType.
+  - Added Triangle button to Toolbar.
+  - Implemented drawing logic (preview and commit) in CanvasStack.
+
+CHANGED:
+- Updated CanvasStack.tsx to handle triangle geometry (isosceles based on bounding box).
+- Updated DrawingPage.tsx to include the new tool button.
+
+NEXT:
+- Continue with requested features.
+

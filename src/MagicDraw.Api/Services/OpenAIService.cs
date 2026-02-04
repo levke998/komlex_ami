@@ -25,7 +25,8 @@ public class OpenAIService
         var imageClient = client.GetImageClient("dall-e-3");
 
         // 2. Generate
-        ClientResult<GeneratedImage> result = await imageClient.GenerateImageAsync(prompt, new ImageGenerationOptions
+        var refinedPrompt = $"A line drawing or sketch of {prompt}, minimal, black and white on white background";
+        ClientResult<GeneratedImage> result = await imageClient.GenerateImageAsync(refinedPrompt, new ImageGenerationOptions
         {
             Quality = GeneratedImageQuality.Standard,
             Size = GeneratedImageSize.W1024xH1024,
