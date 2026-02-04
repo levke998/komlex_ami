@@ -17,7 +17,7 @@ export const DrawingPage: React.FC = () => {
 
   // Layer State
   const [layers, setLayers] = useState<Layer[]>([
-    { id: "layer-1", name: "Background", isVisible: true, opacity: 1, isLocked: false },
+    { id: "layer-1", name: "Background", isVisible: true, opacity: 1, isLocked: false, shapes: [] },
   ]);
   const [activeLayerId, setActiveLayerId] = useState<string>("layer-1");
 
@@ -108,6 +108,7 @@ export const DrawingPage: React.FC = () => {
       isVisible: true,
       opacity: 1,
       isLocked: false,
+      shapes: [],
     };
     setLayers([...layers, newLayer]);
     setActiveLayerId(newLayer.id);
@@ -208,15 +209,13 @@ export const DrawingPage: React.FC = () => {
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [handleUndo, handleRedo]);
 
-  // Commit drawing to layer content
+  // Commit drawing (Vector mode)
   const handleCommitDraw = () => {
-    if (!canvasRef.current) return;
-    const state = canvasRef.current.exportState();
-    const merged = layers.map((l) => {
-      const img = state.find((s) => s.layerId === l.id);
-      return { ...l, contentDataUrl: img?.dataUrl ?? l.contentDataUrl };
-    });
-    setLayers(merged);
+    // In vector mode, CanvasStack mutates layer.shapes in place (for performance/ref).
+    // We just need to trigger a state update and push history.
+    // Deep clone to ensure immutability for history
+    const newLayers = layers.map(l => ({ ...l, shapes: [...(l.shapes || [])] }));
+    setLayers(newLayers);
     pushHistory();
   };
 
@@ -259,6 +258,7 @@ export const DrawingPage: React.FC = () => {
           blendMode: cfg.blendMode,
           filter: cfg.filter,
           contentDataUrl: l.imageUrl ?? undefined,
+          shapes: [], // Load shapes if available in future
         };
       });
       setLayers(loadedLayers);
@@ -289,6 +289,7 @@ export const DrawingPage: React.FC = () => {
         isVisible: true,
         opacity: 1,
         isLocked: false,
+        shapes: [],
       };
       setLayers((prev) => [...prev, newLayer]);
       setActiveLayerId(newLayerId);
@@ -377,6 +378,7 @@ export const DrawingPage: React.FC = () => {
         isLocked: true,
         blendMode: blendMode,
         filter: `blur(${overlayBlur}px) ${filterBoost}`,
+        shapes: [],
       };
 
       pushHistory();
@@ -469,6 +471,7 @@ export const DrawingPage: React.FC = () => {
           <ToolButton active={selectedTool === "pencil"} onClick={() => setSelectedTool("pencil")} icon="✏️" title="Pencil" />
           <ToolButton active={selectedTool === "brush"} onClick={() => setSelectedTool("brush")} icon="🖌️" title="Brush" />
           <ToolButton active={selectedTool === "eraser"} onClick={() => setSelectedTool("eraser")} icon="🧼" title="Eraser" />
+          <ToolButton active={selectedTool === "move"} onClick={() => setSelectedTool("move")} icon="✋" title="Move" />
           <div className="w-[1px] h-6 bg-slate-700 mx-1"></div>
           <ToolButton active={selectedTool === "rectangle"} onClick={() => setSelectedTool("rectangle")} icon="⬜" title="Rectangle" />
           <ToolButton active={selectedTool === "circle"} onClick={() => setSelectedTool("circle")} icon="⭕" title="Circle" />
@@ -640,8 +643,8 @@ export const DrawingPage: React.FC = () => {
                           key={s.id}
                           onClick={() => setSelectedStyleId(s.id)}
                           className={`p-2 rounded-lg border text-left transition-all ${selectedStyleId === s.id
-                              ? "bg-indigo-600/20 border-indigo-500 text-indigo-200"
-                              : "bg-[#1e212b] border-slate-700 text-slate-400 hover:border-slate-500"
+                            ? "bg-indigo-600/20 border-indigo-500 text-indigo-200"
+                            : "bg-[#1e212b] border-slate-700 text-slate-400 hover:border-slate-500"
                             }`}
                           type="button"
                         >
@@ -665,8 +668,8 @@ export const DrawingPage: React.FC = () => {
                           key={s.id}
                           onClick={() => setSelectedOverlayId(s.id)}
                           className={`p-2 rounded-lg border text-left transition-all ${selectedOverlayId === s.id
-                              ? "bg-emerald-600/15 border-emerald-500 text-emerald-200"
-                              : "bg-[#141621] border-slate-700 text-slate-400 hover:border-slate-500"
+                            ? "bg-emerald-600/15 border-emerald-500 text-emerald-200"
+                            : "bg-[#141621] border-slate-700 text-slate-400 hover:border-slate-500"
                             }`}
                           type="button"
                         >
@@ -728,8 +731,8 @@ export const DrawingPage: React.FC = () => {
                         key={s.id}
                         onClick={() => setSelectedRewriteId(s.id)}
                         className={`p-2 rounded-lg border text-left transition-all ${selectedRewriteId === s.id
-                            ? "bg-emerald-600/20 border-emerald-500 text-emerald-200"
-                            : "bg-[#1e212b] border-slate-700 text-slate-400 hover:border-slate-500"
+                          ? "bg-emerald-600/20 border-emerald-500 text-emerald-200"
+                          : "bg-[#1e212b] border-slate-700 text-slate-400 hover:border-slate-500"
                           }`}
                         type="button"
                       >
@@ -742,8 +745,8 @@ export const DrawingPage: React.FC = () => {
                     onClick={handleRewrite}
                     disabled={isRewriting || !prompt.trim()}
                     className={`mt-3 w-full py-2 rounded-lg border border-emerald-500/40 text-white shadow-md shadow-emerald-500/10 ${isRewriting
-                        ? "opacity-60 bg-emerald-600/60"
-                        : "bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500"
+                      ? "opacity-60 bg-emerald-600/60"
+                      : "bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500"
                       }`}
                   >
                     {isRewriting ? "Enhancing..." : "Improve Prompt"}
@@ -772,8 +775,8 @@ export const DrawingPage: React.FC = () => {
                     onClick={handleGenerateOverlay}
                     disabled={isGeneratingOverlay || !prompt.trim()}
                     className={`w-full py-3 rounded-lg border border-emerald-500/40 text-white shadow-md shadow-emerald-500/10 ${isGeneratingOverlay
-                        ? "opacity-60 bg-emerald-600/60"
-                        : "bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500"
+                      ? "opacity-60 bg-emerald-600/60"
+                      : "bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500"
                       }`}
                   >
                     {isGeneratingOverlay ? "Generating overlay..." : "Generate Glow Overlay"}
@@ -841,8 +844,8 @@ export const DrawingPage: React.FC = () => {
                   onClick={handleGenerateCaption}
                   disabled={isCaptioning || (!prompt.trim() && !captionNotes.trim())}
                   className={`w-full py-2 rounded-lg border border-emerald-500/40 text-white shadow-md shadow-emerald-500/10 ${isCaptioning
-                      ? "opacity-60 bg-emerald-600/60"
-                      : "bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500"
+                    ? "opacity-60 bg-emerald-600/60"
+                    : "bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500"
                     }`}
                 >
                   {isCaptioning ? "Generating caption..." : "Generate Title + Description"}
