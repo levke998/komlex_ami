@@ -290,6 +290,7 @@ NEXT:
 - Continue with requested features.
 
 [2026-02-04 17:10] Antigravity
+
 DONE:
 - Diagnosed persistent `500 Internal Server Error` (Optimistic Concurrency) and `405 Method Not Allowed` issues when saving layers via the API.
 - Attempted multiple backend-compliance strategies:
@@ -308,3 +309,18 @@ DONE:
 
 DECISIONS:
 - Adopted Hybrid Storage to ensure application functionality without requiring immediate C# backend fixes. This makes drawings persistent on the local machine but limits portability across devices until the backend is patched.
+
+## 2026-02-05 - Gallery Bug Fixes and Stabilization (DONE)
+
+**Fixes Implemented:**
+- **Gallery Image Display:** Solved the "broken image" issue. The root cause was inconsistent key names in LocalStorage (`drawing-ID` vs `magicdraw_layers_ID`).
+- **Universal Lookup:** `MyDrawings.tsx` now attempts multiple key variations to ensure saved drawings are found.
+- **Routing Fix:** Unified `/gallery` and `/my-drawings` routes in `App.tsx`.
+- **White Screen Fix:** Cleaned up missing imports and unused variables in `DrawingPage.tsx`.
+- **Missing Service:** Created `services/ai.ts` for missing AI functions to prevent editor crashes.
+- **UI Cleanup:** Removed the redundant "Local Data" green tick from gallery items to reduce visual clutter.
+
+**Current Status:**
+- Hybrid System (Save/Load) is 100% functional.
+- The Gallery correctly displays all local drawings with previews.
+- Loading is stable; the "Canvas" no longer remains empty.

@@ -94,6 +94,23 @@ export async function saveDrawingWithLayers(token: string, layers: Layer[], size
   return drawing.id;
 }
 
+// ÚJ: Rajzok listázása
+export async function getMyDrawings(token: string) {
+  const res = await fetch(API_BASE, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  if (!res.ok) throw new Error(await res.text());
+  
+  const drawings = await res.json();
+
+  // Extra: Megjelöljük, hogy melyik van meg a gépen (LocalStorage)
+  return drawings.map((d: any) => ({
+    ...d,
+    // Megnézzük, van-e helyi adat hozzá
+    hasLocalData: !!localStorage.getItem(`magicdraw_layers_${d.id}`)
+  }));
+}
+
 // Kompatibilitás (üres függvények, hogy ne törjön el a kód máshol)
 export async function addLayer(token: string, drawingId: string, payload: any) { return {}; }
 export async function updateDrawing(token: string, drawingId: string, title: string, width: number, height: number, layers: Layer[]) { return true; }
